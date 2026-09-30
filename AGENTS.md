@@ -45,6 +45,8 @@ Import from `src` using the `@/` alias (`@/components/ui/button`).
 
 - TypeScript strict. No `any`, including `as any`. Model unknown data with `unknown` and narrow it.
 - Functional components only. Named exports only (no `export default` in `src/`).
+- Prefer composition over boolean props: build components from small parts and expose explicit variants (for example `ServiceCard` / `FeaturedServiceCard`), not `featured`/`dark` flags.
+- Scroll reveals use `<Reveal>`; inside lists use `<Reveal as="li">` so the markup stays valid.
 - Component files use PascalCase (`HeroSection.tsx`). shadcn's kebab-case files in `components/ui/` are the exception.
 
 ### Content

@@ -75,15 +75,39 @@ export const homeAbout: HomeAbout = {
   },
 }
 
+export interface HomeServices {
+  eyebrow: string
+  title: string
+  learnMore: string
+  checklist: { text: string; links: readonly NavLink[] }
+}
+
+export const homeServices: HomeServices = {
+  eyebrow: 'What we do',
+  title: 'Build, automate and grow with one technology partner.',
+  learnMore: 'Learn more',
+  // Forms and descriptions from /services/ ("Client Checklist Form" section).
+  checklist: {
+    text: 'Planning a website or mobile app? Our checklist forms capture your goals, features, users, budget and timelines before we start.',
+    links: [
+      { label: 'Website checklist', href: 'https://forms.gle/tKaBT39AWJqJDHb98', external: true },
+      {
+        label: 'Mobile app checklist',
+        href: 'https://forms.gle/bmbxCA1CLruqx9fG6',
+        external: true,
+      },
+    ],
+  },
+}
+
 export interface HomePlaceholder {
-  id: Exclude<HomeSectionId, 'hero' | 'about'>
+  id: Exclude<HomeSectionId, 'hero' | 'about' | 'services'>
   title: string
   note: string
 }
 
 // Placeholder content until each section is built. Titles are the live site's headings.
 export const homePlaceholders: readonly HomePlaceholder[] = [
-  { id: 'services', title: 'What we do', note: 'TODO: services section' },
   { id: 'sumic-online', title: 'Sumic Online', note: 'TODO: Sumic Online section' },
   { id: 'proof', title: 'Our partners', note: 'TODO: partners and proof section' },
   { id: 'cta', title: 'Talk to us', note: 'TODO: call-to-action section' },
