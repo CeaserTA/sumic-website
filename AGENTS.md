@@ -27,6 +27,7 @@ src/
   components/effects/   React Bits components (added as source, see below)
   components/layout/    Navbar, MobileNav, Footer, Container, Section, Logo
   components/icons/     brand icons lucide doesn't ship (SocialIcon)
+  components/motion/    small Motion helpers (Reveal)
   sections/home/        one file per home page section
   content/              ALL copy and data as typed TS objects
                           site.ts (company, nav, contact), services.ts, partners.ts,
@@ -50,6 +51,7 @@ Import from `src` using the `@/` alias (`@/components/ui/button`).
 
 - All copy lives in `src/content/`. Sections receive data through props. No hardcoded strings in JSX.
 - Interface labels and accessible names ("Open menu", "Skip to content") live in `src/content/ui.ts`.
+- Render partners from `confirmedPartners` (it excludes entries whose name is still `TODO:`), never from `partners` directly.
 - Content comes from sumicitsolutions.com. **Never invent clients, testimonials, stats or awards.** If something is missing, use a clearly marked `TODO:` placeholder.
 
 ### Styling
@@ -98,6 +100,13 @@ Import from `src` using the `@/` alias (`@/components/ui/button`).
 React Bits is not an npm package. Add components as source with
 `npx shadcn@latest add @react-bits/<Component>-TS-TW`, then move them into `src/components/effects/`.
 Only add a component when a section needs it.
+
+After adding one:
+
+- **Check `package.json`.** Registry items pin old dependency ranges (BlurText pins `motion@^12` and downgrades Motion). Restore the project's versions.
+- **Adapt it to project rules:** named export, no `'use client'`, no `React.FC`, strict-safe indexing, Tailwind classes instead of inline styles, no ref writes during render.
+- **WebGL/canvas backgrounds** must use ogl or plain canvas (never three.js). Load them with `React.lazy` + `Suspense` behind `useHeavyEffects()`, which is off for reduced motion, screens under 768px and low-end devices. Always render a static CSS fallback first (see `bg-hero-glow` in `index.css`).
+- **Effect colours** come from tokens at runtime via `cssVarToRgb('--brand-accent')`, never hard-coded RGB.
 
 ## Agent skills
 

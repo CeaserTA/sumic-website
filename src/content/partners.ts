@@ -39,3 +39,8 @@ export const partners: readonly Partner[] = [
   { name: 'Darajapan', logo: logo('darajapan') },
   { name: 'KPMG', logo: logo('kpmg') },
 ]
+
+/** Partners safe to render: excludes any entry whose name is still a TODO placeholder. */
+export const confirmedPartners: readonly Partner[] = partners.filter(
+  (partner) => !partner.name.startsWith('TODO'),
+)

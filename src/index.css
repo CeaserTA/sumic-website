@@ -174,6 +174,23 @@
   }
 }
 
+/* Static hero background: navy with a soft green glow. Always rendered; it's the full
+   background when the animated effect is skipped (reduced motion, mobile, low-end). */
+@utility bg-hero-glow {
+  background-color: var(--brand-primary);
+  background-image:
+    radial-gradient(
+      60% 55% at 85% 25%,
+      color-mix(in oklab, var(--brand-accent) 14%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      55% 60% at 5% 100%,
+      color-mix(in oklab, var(--sumic-ink) 55%, transparent),
+      transparent 70%
+    );
+}
+
 /* Safety net; Motion components also check useReducedMotion(). */
 @media (prefers-reduced-motion: reduce) {
   *,

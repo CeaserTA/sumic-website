@@ -1,14 +1,15 @@
 import { Footer } from '@/components/layout/Footer'
 import { Navbar } from '@/components/layout/Navbar'
 import { Section } from '@/components/layout/Section'
-import { homeHero, homePlaceholders, homeSectionIds } from '@/content/home'
+import { homeAbout, homeHero, homePlaceholders, homeSectionIds } from '@/content/home'
 import { services } from '@/content/services'
 import { site } from '@/content/site'
 import { useActiveSection } from '@/hooks/useActiveSection'
 import { cn } from '@/lib/utils'
+import { AboutSection } from '@/sections/home/AboutSection'
+import { HeroSection } from '@/sections/home/HeroSection'
 
 const placeholderTones = {
-  about: 'default',
   services: 'muted',
   'sumic-online': 'default',
   proof: 'muted',
@@ -20,21 +21,19 @@ export function HomePage() {
 
   return (
     <>
-      <Navbar links={site.nav} cta={site.cta} activeSectionId={activeSectionId} />
+      {/* The hero is navy, so the transparent navbar uses white text and the inverse logo. */}
+      <Navbar
+        links={site.nav}
+        cta={site.cta}
+        activeSectionId={activeSectionId}
+        overlayTone="dark"
+      />
 
       <main id="main" tabIndex={-1} className="outline-none">
-        {/* TODO: replace each placeholder with its section in sections/home/. */}
-        <Section
-          id="hero"
-          titleAs="h1"
-          title={homeHero.title}
-          subtitle={homeHero.subtitle}
-          tone="muted"
-          className="flex min-h-[80svh] items-center pt-32"
-        >
-          <PlaceholderNote note={homeHero.note} />
-        </Section>
+        <HeroSection content={homeHero} />
+        <AboutSection content={homeAbout} products={site.products} />
 
+        {/* TODO: replace each placeholder with its section in sections/home/. */}
         {homePlaceholders.map((section) => (
           <Section
             key={section.id}

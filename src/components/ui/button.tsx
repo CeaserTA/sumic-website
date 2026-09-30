@@ -12,6 +12,9 @@ const buttonVariants = cva(
         // Project addition: brand green with navy text (8.5:1).
         accent:
           'bg-accent text-accent-foreground hover:bg-[color-mix(in_oklch,var(--accent),var(--primary)_14%)]',
+        // Project addition: outline button for dark (navy) surfaces.
+        'outline-inverse':
+          'border-brand-primary-foreground/45 bg-transparent text-brand-primary-foreground hover:border-brand-primary-foreground/60 hover:bg-brand-primary-foreground/10',
         outline:
           'border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50',
         secondary:
