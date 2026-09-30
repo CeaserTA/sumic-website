@@ -6,14 +6,14 @@ import { site } from '@/content/site'
  * Wording is tightened from the live site; every claim is taken from it.
  */
 
-export type HomeSectionId = 'hero' | 'about' | 'services' | 'sumic-online' | 'proof' | 'cta'
+export type HomeSectionId = 'hero' | 'about' | 'services' | 'products' | 'proof' | 'cta'
 
 /** Section order on the home page; also used for active-link tracking. */
 export const homeSectionIds: readonly HomeSectionId[] = [
   'hero',
   'about',
   'services',
-  'sumic-online',
+  'products',
   'proof',
   'cta',
 ]
@@ -100,15 +100,68 @@ export const homeServices: HomeServices = {
   },
 }
 
+export type ProductId = 'talent-kasi' | 'sumic-online'
+
+export interface ProductFeature {
+  name: string
+  /** One line in the product's own wording. */
+  description: string
+  features: readonly string[]
+  href: string
+  linkLabel: string
+}
+
+export interface HomeProducts {
+  eyebrow: string
+  title: string
+  subtitle: string
+  items: readonly (ProductFeature & { id: ProductId })[]
+}
+
+export const homeProducts: HomeProducts = {
+  eyebrow: 'Our products',
+  title: 'Beyond client work, we build and run our own platforms.',
+  subtitle: 'Two of the products in Sumic’s own technology ecosystem.',
+  items: [
+    {
+      // Source: talentkasi.com (meta description, "How it works", "Features", "Who it’s for").
+      id: 'talent-kasi',
+      name: 'Talent Kasi',
+      description:
+        'An AI-powered recruitment and talent management platform that helps organizations attract, screen, evaluate and hire the right talent faster.',
+      features: [
+        'AI parses every CV, in PDF or DOCX, and ranks applicants with evidence on skills, experience and education.',
+        'A public careers page where candidates apply directly.',
+        'One hiring dashboard to shortlist, update status and email candidates.',
+      ],
+      href: 'https://talentkasi.com/',
+      linkLabel: 'Visit Talent Kasi',
+    },
+    {
+      // Source: sumiconline.com (title and meta description). /about/ also calls it B2B2C.
+      id: 'sumic-online',
+      name: 'Sumic Online',
+      description:
+        'A B2B trade portal for global sourcing: one unified B2B and B2C platform across Africa and beyond.',
+      features: [
+        'Connect with verified suppliers.',
+        'Trade with secure transactions.',
+        'Access integrated logistics on the same platform.',
+      ],
+      href: 'https://sumiconline.com/',
+      linkLabel: 'Visit Sumic Online',
+    },
+  ],
+}
+
 export interface HomePlaceholder {
-  id: Exclude<HomeSectionId, 'hero' | 'about' | 'services'>
+  id: Exclude<HomeSectionId, 'hero' | 'about' | 'services' | 'products'>
   title: string
   note: string
 }
 
 // Placeholder content until each section is built. Titles are the live site's headings.
 export const homePlaceholders: readonly HomePlaceholder[] = [
-  { id: 'sumic-online', title: 'Sumic Online', note: 'TODO: Sumic Online section' },
   { id: 'proof', title: 'Our partners', note: 'TODO: partners and proof section' },
   { id: 'cta', title: 'Talk to us', note: 'TODO: call-to-action section' },
 ]

@@ -1,17 +1,24 @@
 import { Footer } from '@/components/layout/Footer'
 import { Navbar } from '@/components/layout/Navbar'
 import { Section } from '@/components/layout/Section'
-import { homeAbout, homeHero, homePlaceholders, homeSectionIds, homeServices } from '@/content/home'
+import {
+  homeAbout,
+  homeHero,
+  homePlaceholders,
+  homeProducts,
+  homeSectionIds,
+  homeServices,
+} from '@/content/home'
 import { services } from '@/content/services'
 import { site } from '@/content/site'
 import { useActiveSection } from '@/hooks/useActiveSection'
 import { cn } from '@/lib/utils'
 import { AboutSection } from '@/sections/home/AboutSection'
 import { HeroSection } from '@/sections/home/HeroSection'
+import { ProductsSection } from '@/sections/home/ProductsSection'
 import { ServicesSection } from '@/sections/home/ServicesSection'
 
 const placeholderTones = {
-  'sumic-online': 'primary',
   proof: 'muted',
   cta: 'primary',
 } as const
@@ -33,6 +40,7 @@ export function HomePage() {
         <HeroSection content={homeHero} />
         <AboutSection content={homeAbout} products={site.products} />
         <ServicesSection content={homeServices} services={services} />
+        <ProductsSection content={homeProducts} />
 
         {/* TODO: replace each placeholder with its section in sections/home/. */}
         {homePlaceholders.map((section) => (
