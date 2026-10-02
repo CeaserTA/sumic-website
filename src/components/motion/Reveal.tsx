@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { motion } from 'motion/react'
+import { m } from 'motion/react'
 
 interface RevealProps {
   children: ReactNode
@@ -15,7 +15,7 @@ interface RevealProps {
  * Under reduced motion, MotionConfig (App.tsx) drops the movement and keeps a plain fade.
  */
 export function Reveal({ children, index = 0, as = 'div', className }: RevealProps) {
-  const Component = as === 'li' ? motion.li : motion.div
+  const Component = as === 'li' ? m.li : m.div
   return (
     <Component
       initial={{ opacity: 0, y: 20 }}

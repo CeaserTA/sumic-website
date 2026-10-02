@@ -46,7 +46,12 @@ export function Section({
       // Focusable so in-page navigation can move focus here.
       tabIndex={-1}
       aria-labelledby={title ? titleId : undefined}
-      className={cn('py-16 outline-none sm:py-20 lg:py-28', toneClasses[tone], className)}
+      // Sections sit below the hero, so the browser can skip styling them until near view.
+      className={cn(
+        'py-16 defer-render outline-none sm:py-20 lg:py-28',
+        toneClasses[tone],
+        className,
+      )}
     >
       <Container className={containerClassName}>
         {(eyebrow ?? title ?? subtitle) && (

@@ -1,79 +1,84 @@
-import { Footer } from '@/components/layout/Footer'
+import { lazy, Suspense } from 'react'
+
 import { Navbar } from '@/components/layout/Navbar'
-import { Section } from '@/components/layout/Section'
 import {
   homeAbout,
+  homeCta,
   homeHero,
-  homePlaceholders,
   homeProducts,
+  homeProof,
   homeSectionIds,
   homeServices,
 } from '@/content/home'
+import { confirmedPartners } from '@/content/partners'
 import { services } from '@/content/services'
 import { site } from '@/content/site'
+import { testimonials } from '@/content/testimonials'
 import { useActiveSection } from '@/hooks/useActiveSection'
-import { cn } from '@/lib/utils'
-import { AboutSection } from '@/sections/home/AboutSection'
 import { HeroSection } from '@/sections/home/HeroSection'
-import { ProductsSection } from '@/sections/home/ProductsSection'
-import { ServicesSection } from '@/sections/home/ServicesSection'
 
-const placeholderTones = {
-  proof: 'muted',
-  cta: 'primary',
-} as const
+// Below-the-fold sections load as separate chunks. The prerendered HTML already contains
+// them, so there is no visual gap: React hydrates each one once its code arrives.
+const AboutSection = lazy(() =>
+  import('@/sections/home/AboutSection').then((m) => ({ default: m.AboutSection })),
+)
+const ServicesSection = lazy(() =>
+  import('@/sections/home/ServicesSection').then((m) => ({ default: m.ServicesSection })),
+)
+const ProductsSection = lazy(() =>
+  import('@/sections/home/ProductsSection').then((m) => ({ default: m.ProductsSection })),
+)
+const ProofSection = lazy(() =>
+  import('@/sections/home/ProofSection').then((m) => ({ default: m.ProofSection })),
+)
+const CtaSection = lazy(() =>
+  import('@/sections/home/CtaSection').then((m) => ({ default: m.CtaSection })),
+)
+const Footer = lazy(() => import('@/components/layout/Footer').then((m) => ({ default: m.Footer })))
 
-export function HomePage() {
+/**
+ * Navbar plus active-section tracking. Kept separate so scroll-driven state changes never
+ * re-render HomePage (and never push updates into sections that are still hydrating).
+ */
+function SiteNavbar() {
   const activeSectionId = useActiveSection(homeSectionIds)
-
   return (
-    <>
-      {/* The hero is navy, so the transparent navbar uses white text and the inverse logo. */}
-      <Navbar
-        links={site.nav}
-        cta={site.cta}
-        activeSectionId={activeSectionId}
-        overlayTone="dark"
-      />
-
-      <main id="main" tabIndex={-1} className="outline-none">
-        <HeroSection content={homeHero} />
-        <AboutSection content={homeAbout} products={site.products} />
-        <ServicesSection content={homeServices} services={services} />
-        <ProductsSection content={homeProducts} />
-
-        {/* TODO: replace each placeholder with its section in sections/home/. */}
-        {homePlaceholders.map((section) => (
-          <Section
-            key={section.id}
-            id={section.id}
-            title={section.title}
-            tone={placeholderTones[section.id]}
-          >
-            <PlaceholderNote
-              note={section.note}
-              dark={placeholderTones[section.id] === 'primary'}
-            />
-          </Section>
-        ))}
-      </main>
-
-      <Footer site={site} services={services} />
-    </>
+    // The hero is navy, so the transparent navbar uses white text and the inverse logo.
+    <Navbar links={site.nav} cta={site.cta} activeSectionId={activeSectionId} overlayTone="dark" />
   )
 }
 
-function PlaceholderNote({ note, dark = false }: { note: string; dark?: boolean }) {
+export function HomePage() {
   return (
-    <p
-      className={cn(
-        'mt-10 rounded-xl border border-dashed p-8',
-        dark
-          ? 'border-brand-primary-foreground/30 text-brand-primary-foreground/75'
-          : 'border-brand-line',
-      )}
-    >
-      {note}
-    </p>
+    <>
+      <SiteNavbar />
+
+      <main id="main" tabIndex={-1} className="outline-none">
+        <HeroSection content={homeHero} />
+        <Suspense fallback={null}>
+          <AboutSection content={homeAbout} products={site.products} />
+        </Suspense>
+        <Suspense fallback={null}>
+          <ServicesSection content={homeServices} services={services} />
+        </Suspense>
+        <Suspense fallback={null}>
+          <ProductsSection content={homeProducts} />
+        </Suspense>
+        <Suspense fallback={null}>
+          <ProofSection
+            content={homeProof}
+            partners={confirmedPartners}
+            testimonials={testimonials}
+          />
+        </Suspense>
+        <Suspense fallback={null}>
+          <CtaSection content={homeCta} />
+        </Suspense>
+      </main>
+
+      <Suspense fallback={null}>
+        <Footer site={site} services={services} />
+      </Suspense>
+    </>
   )
 }

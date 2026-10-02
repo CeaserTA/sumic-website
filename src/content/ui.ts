@@ -8,6 +8,14 @@ export const ui = {
     menuTitle: 'Menu',
     opensInNewTab: '(opens in new tab)',
   },
+  heroBackground: {
+    pause: 'Pause background animation',
+    play: 'Play background animation',
+  },
+  marquee: {
+    pause: 'Pause logo animation',
+    play: 'Play logo animation',
+  },
   footer: {
     quickLinks: 'Quick links',
     services: 'What we do',

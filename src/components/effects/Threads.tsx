@@ -11,6 +11,8 @@ export interface ThreadsProps {
   amplitude?: number
   distance?: number
   enableMouseInteraction?: boolean
+  /** Freeze on the current frame (e.g. from a user pause control). */
+  paused?: boolean
   className?: string
 }
 
@@ -136,6 +138,7 @@ export function Threads({
   amplitude = 1,
   distance = 0,
   enableMouseInteraction = false,
+  paused = false,
   className,
 }: ThreadsProps) {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -143,10 +146,10 @@ export function Threads({
 
   // Keep the latest props in a ref so updating them mutates the live shader
   // uniforms instead of tearing down and rebuilding the whole WebGL context.
-  const propsRef = useRef({ color, amplitude, distance, enableMouseInteraction })
+  const propsRef = useRef({ color, amplitude, distance, enableMouseInteraction, paused })
   useEffect(() => {
-    propsRef.current = { color, amplitude, distance, enableMouseInteraction }
-  }, [color, amplitude, distance, enableMouseInteraction])
+    propsRef.current = { color, amplitude, distance, enableMouseInteraction, paused }
+  }, [color, amplitude, distance, enableMouseInteraction, paused])
 
   useEffect(() => {
     if (!containerRef.current) return
@@ -225,9 +228,21 @@ export function Threads({
     )
     intersectionObserver.observe(container)
 
+    // Time spent paused is subtracted so the animation resumes where it stopped.
+    let pausedAt: number | null = null
+    let pausedTotal = 0
+
     function update(t: number) {
       animationFrameId.current = requestAnimationFrame(update)
       if (!isVisible || document.hidden) return
+      if (propsRef.current.paused) {
+        pausedAt ??= t
+        return
+      }
+      if (pausedAt !== null) {
+        pausedTotal += t - pausedAt
+        pausedAt = null
+      }
 
       const { color, amplitude, distance, enableMouseInteraction } = propsRef.current
 
@@ -245,7 +260,7 @@ export function Threads({
         program.uniforms.uMouse.value[0] = 0.5
         program.uniforms.uMouse.value[1] = 0.5
       }
-      program.uniforms.iTime.value = t * 0.001
+      program.uniforms.iTime.value = (t - pausedTotal) * 0.001
 
       renderer.render({ scene: mesh })
     }

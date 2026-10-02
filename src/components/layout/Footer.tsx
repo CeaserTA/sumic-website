@@ -4,7 +4,6 @@ import { ArrowUpRightIcon, MailIcon, MapPinIcon, PhoneIcon, type LucideIcon } fr
 import { SocialIcon } from '@/components/icons/SocialIcon'
 import { Container } from '@/components/layout/Container'
 import { Logo } from '@/components/layout/Logo'
-import { Separator } from '@/components/ui/separator'
 import type { Service } from '@/content/services'
 import type { SiteContent } from '@/content/site'
 import { ui } from '@/content/ui'
@@ -30,22 +29,21 @@ export function Footer({ site, services, servicesHref = '#services' }: FooterPro
   const legalId = useId()
 
   return (
-    <footer className="bg-brand-primary text-brand-primary-foreground [--ring:var(--brand-accent)]">
-      <Container className="py-16 lg:py-20">
-        <div className="flex max-w-4xl flex-col gap-6">
-          <span aria-hidden="true" className="h-1 w-12 rounded-full bg-brand-accent" />
-          <p className="font-heading text-3xl leading-tight font-semibold text-balance sm:text-4xl lg:text-5xl">
-            {site.vision}
-          </p>
-        </div>
-
-        <Separator className="my-12 bg-brand-primary-foreground/15 lg:my-16" />
-
-        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8">
-          <div className="flex flex-col gap-6 sm:col-span-2 lg:col-span-4">
-            <Logo variant="inverse" className="h-16" />
-            <p className="max-w-sm text-brand-primary-foreground/75">{site.summary}</p>
-            <div className="flex flex-col gap-3">
+    <footer
+      id="site-footer"
+      className="bg-brand-primary text-brand-primary-foreground defer-render [--ring:var(--brand-accent)]"
+    >
+      <Container className="py-12 lg:py-14">
+        {/* Compact layout: brand column (logo, vision, summary, social) + three link columns.
+            On phones the two link lists sit side by side. */}
+        <div className="grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-12 lg:gap-8">
+          <div className="col-span-2 flex flex-col gap-4 lg:col-span-4">
+            <Logo variant="inverse" sizes="70px" className="h-12" />
+            <p className="max-w-sm border-l-2 border-brand-accent pl-3 font-heading text-lg leading-snug font-semibold text-balance">
+              {site.vision}
+            </p>
+            <p className="max-w-sm text-sm text-brand-primary-foreground/75">{site.summary}</p>
+            <div>
               <h2 id={socialId} className="sr-only">
                 {ui.footer.social}
               </h2>
@@ -57,9 +55,9 @@ export function Footer({ site, services, servicesHref = '#services' }: FooterPro
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`${social.label} ${ui.nav.opensInNewTab}`}
-                      className="inline-flex size-11 items-center justify-center rounded-full bg-brand-primary-foreground/10 text-brand-primary-foreground transition-colors hover:bg-brand-accent hover:text-brand-accent-foreground"
+                      className="inline-flex size-10 items-center justify-center rounded-full bg-brand-primary-foreground/10 text-brand-primary-foreground transition-colors hover:bg-brand-accent hover:text-brand-accent-foreground"
                     >
-                      <SocialIcon platform={social.platform} className="size-[1.125rem]" />
+                      <SocialIcon platform={social.platform} className="size-4" />
                     </a>
                   </li>
                 ))}
@@ -88,7 +86,11 @@ export function Footer({ site, services, servicesHref = '#services' }: FooterPro
             ))}
           </FooterColumn>
 
-          <FooterColumn id={contactId} title={ui.footer.contact} className="lg:col-span-3">
+          <FooterColumn
+            id={contactId}
+            title={ui.footer.contact}
+            className="col-span-2 lg:col-span-3"
+          >
             <ContactItem icon={MapPinIcon}>
               <a
                 href={site.contact.mapUrl}
@@ -115,7 +117,7 @@ export function Footer({ site, services, servicesHref = '#services' }: FooterPro
       </Container>
 
       <div className="border-t border-brand-primary-foreground/15">
-        <Container className="flex flex-col gap-4 py-6 text-sm sm:flex-row sm:items-center sm:justify-between">
+        <Container className="flex flex-col gap-3 py-5 text-sm sm:flex-row sm:items-center sm:justify-between">
           <p className="text-brand-primary-foreground/75">{site.footer.copyright(year)}</p>
           <h2 id={legalId} className="sr-only">
             {ui.footer.legal}
@@ -145,10 +147,10 @@ interface FooterColumnProps {
 function FooterColumn({ id, title, className, children }: FooterColumnProps) {
   return (
     <div className={className}>
-      <h2 id={id} className="mb-5 font-sans text-sm font-semibold text-brand-primary-foreground">
+      <h2 id={id} className="mb-3 font-sans text-sm font-semibold text-brand-primary-foreground">
         {title}
       </h2>
-      <ul aria-labelledby={id} className="flex flex-col gap-3">
+      <ul aria-labelledby={id} className="flex flex-col gap-2 text-sm">
         {children}
       </ul>
     </div>
@@ -158,7 +160,7 @@ function FooterColumn({ id, title, className, children }: FooterColumnProps) {
 function ContactItem({ icon: Icon, children }: { icon: LucideIcon; children: ReactNode }) {
   return (
     <li className="flex gap-3">
-      <Icon aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-brand-accent" />
+      <Icon aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-brand-accent" />
       {children}
     </li>
   )

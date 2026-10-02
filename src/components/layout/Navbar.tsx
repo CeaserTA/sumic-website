@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { motion, useMotionValueEvent, useScroll } from 'motion/react'
+import { m, useMotionValueEvent, useScroll } from 'motion/react'
 import { ArrowUpRightIcon } from 'lucide-react'
 
 import { Container } from '@/components/layout/Container'
@@ -52,7 +52,7 @@ export function Navbar({ links, cta, activeSectionId = null, overlayTone = 'ligh
   const dark = overlayTone === 'dark' && !solid
 
   return (
-    <motion.header
+    <m.header
       initial={false}
       animate={{ y: hidden ? '-100%' : '0%' }}
       transition={{ duration: 0.25, ease: 'easeOut' }}
@@ -109,7 +109,7 @@ export function Navbar({ links, cta, activeSectionId = null, overlayTone = 'ligh
           />
         </div>
       </Container>
-    </motion.header>
+    </m.header>
   )
 }
 
@@ -129,7 +129,7 @@ function DesktopNavItem({ link, active, dark }: DesktopNavItemProps) {
     active && 'font-semibold',
   )
   const indicator = active && (
-    <motion.span
+    <m.span
       layoutId="nav-active-indicator"
       aria-hidden="true"
       className={cn(

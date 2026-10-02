@@ -1,4 +1,4 @@
-import { useReducedMotion } from 'motion/react'
+import { useSyncExternalStore } from 'react'
 
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 
@@ -9,7 +9,6 @@ interface NavigatorHints {
 }
 
 function isLowEndDevice(): boolean {
-  if (typeof navigator === 'undefined') return true
   const hints = navigator as Navigator & NavigatorHints
   return (
     hints.connection?.saveData === true ||
@@ -18,12 +17,21 @@ function isLowEndDevice(): boolean {
   )
 }
 
+const noSubscribe = () => () => {}
+
 /**
  * Whether heavy visual effects (WebGL/canvas backgrounds) should run.
  * Off for reduced motion, narrow screens (< 768px), data saver and low-end devices.
+ * Prerender and hydration assume "off"; the client re-checks right after hydrating.
  */
 export function useHeavyEffects(): boolean {
-  const reduceMotion = useReducedMotion()
+  const reduceMotion = useReducedMotionPreference()
   const wide = useMediaQuery('(min-width: 768px)')
-  return !reduceMotion && wide && !isLowEndDevice()
+  const lowEnd = useSyncExternalStore(noSubscribe, isLowEndDevice, () => true)
+  return !reduceMotion && wide && !lowEnd
+}
+
+/** prefers-reduced-motion as a hydration-safe boolean (false during prerender/hydration). */
+export function useReducedMotionPreference(): boolean {
+  return useMediaQuery('(prefers-reduced-motion: reduce)')
 }

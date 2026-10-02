@@ -4,6 +4,7 @@
  * Supports hex values, which is how the brand primitives are defined.
  */
 export function cssVarToRgb(name: string): [number, number, number] | null {
+  if (typeof document === 'undefined') return null
   const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim()
   const match = /^#([0-9a-f]{6})$/i.exec(value)
   if (!match?.[1]) return null

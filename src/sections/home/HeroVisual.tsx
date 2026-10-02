@@ -1,7 +1,3 @@
-import { motion } from 'motion/react'
-
-const ease = [0.22, 1, 0.36, 1] as const
-
 /**
  * Decorative device composition: a storefront in a browser window plus a mobile app,
  * the two things Sumic builds most. Skeleton blocks only, so it invents no content.
@@ -27,12 +23,8 @@ export function HeroVisual() {
         />
       </svg>
 
-      <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.9, ease, delay: 0.5 }}
-        className="relative overflow-hidden rounded-2xl bg-brand-surface shadow-2xl ring-1 shadow-brand-heading/40 ring-brand-primary-foreground/10"
-      >
+      {/* CSS entrance (animate-rise-in) so it starts on first paint, before JS. */}
+      <div className="relative animate-rise-in overflow-hidden rounded-2xl bg-brand-surface shadow-2xl ring-1 shadow-brand-heading/40 ring-brand-primary-foreground/10 [animation-delay:500ms]">
         <div className="flex h-9 items-center gap-1.5 border-b border-brand-line bg-brand-surface-muted px-4">
           <span className="size-2.5 rounded-full bg-brand-line" />
           <span className="size-2.5 rounded-full bg-brand-line" />
@@ -72,14 +64,9 @@ export function HeroVisual() {
             ))}
           </div>
         </div>
-      </motion.div>
+      </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.9, ease, delay: 0.8 }}
-        className="absolute bottom-0 -left-3 w-[38%] max-w-44 rounded-[1.75rem] bg-brand-heading p-1.5 shadow-2xl ring-1 shadow-brand-heading/50 ring-brand-primary-foreground/15 sm:-left-8"
-      >
+      <div className="absolute bottom-0 -left-3 w-[38%] max-w-44 animate-rise-in rounded-[1.75rem] bg-brand-heading p-1.5 shadow-2xl ring-1 shadow-brand-heading/50 ring-brand-primary-foreground/15 [animation-delay:800ms] sm:-left-8">
         <div className="flex flex-col overflow-hidden rounded-[1.4rem] bg-brand-surface">
           <div className="flex h-5 items-center justify-center">
             <span className="h-1.5 w-10 rounded-full bg-brand-heading/80" />
@@ -98,7 +85,7 @@ export function HeroVisual() {
             <span className="mt-1 h-7 rounded-lg bg-brand-accent" />
           </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   )
 }

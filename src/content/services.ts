@@ -13,9 +13,11 @@ export interface Service {
   /** Compact label for cards, footers and menus, when the title is long. */
   shortTitle?: string
   description: string
-  /** TODO: point at each service's page once it exists. */
+  /** Live /services page for now. TODO: per-service pages on the new site. */
   href: string
 }
+
+const SERVICES_PAGE = 'https://sumicitsolutions.com/services/'
 
 export const services: readonly Service[] = [
   {
@@ -23,28 +25,28 @@ export const services: readonly Service[] = [
     title: 'Mobile Application Development',
     description:
       'Custom Android and iOS apps, taken from wireframes to launch. Fast, secure and built to scale as your customer base grows.',
-    href: '#',
+    href: SERVICES_PAGE,
   },
   {
     id: 'software',
     title: 'Software Development',
     description:
       'Tailored web, desktop and enterprise software that automates your workflows, delivered in agile steps and supported after launch.',
-    href: '#',
+    href: SERVICES_PAGE,
   },
   {
     id: 'ai-models',
     title: 'AI Model Development',
     description:
       'Machine learning models trained on your own data, from predictive analytics to automation, so decisions are faster and better informed.',
-    href: '#',
+    href: SERVICES_PAGE,
   },
   {
     id: 'data-analysis',
     title: 'Data Analysis',
     description:
       'We turn your financial and customer data into clear trends, dashboards and forecasts you can plan around.',
-    href: '#',
+    href: SERVICES_PAGE,
   },
   {
     id: 'ites-bpo',
@@ -52,13 +54,13 @@ export const services: readonly Service[] = [
     shortTitle: 'ITES & BPO',
     description:
       'Hand off customer support, back-office work, data entry and technical support to a trained team, and keep your focus on the core business.',
-    href: '#',
+    href: SERVICES_PAGE,
   },
   {
     id: 'digital-marketing',
     title: 'Digital Marketing',
     description:
       'SEO, social media, content, paid ads and email campaigns built around your goals, with reporting that shows what’s working.',
-    href: '#',
+    href: SERVICES_PAGE,
   },
 ]

@@ -8,14 +8,14 @@ Stack: Vite + React 19 + TypeScript (strict), Tailwind CSS v4 (CSS-first, `@them
 
 ## Commands
 
-| Task          | Command             |
-| ------------- | ------------------- |
-| Dev server    | `npm run dev`       |
-| Build         | `npm run build`     |
-| Preview build | `npm run preview`   |
-| Lint          | `npm run lint`      |
-| Format        | `npm run format`    |
-| Type check    | `npm run typecheck` |
+| Task          | Command                                                          |
+| ------------- | ---------------------------------------------------------------- |
+| Dev server    | `npm run dev`                                                    |
+| Build         | `npm run build` (type check, client build, SSR build, prerender) |
+| Preview build | `npm run preview`                                                |
+| Lint          | `npm run lint`                                                   |
+| Format        | `npm run format`                                                 |
+| Type check    | `npm run typecheck`                                              |
 
 Run `typecheck`, `lint` and `build` before calling any task done.
 
@@ -31,10 +31,14 @@ src/
   sections/home/        one file per home page section
   content/              ALL copy and data as typed TS objects
                           site.ts (company, nav, contact), services.ts, partners.ts,
-                          home.ts (section ids/placeholders), ui.ts (interface labels, a11y names)
+                          home.ts (all home section copy), testimonials.ts, ui.ts (interface labels, a11y names)
   hooks/  lib/  pages/
+  entry-server.tsx      build-time prerender entry (see "Rendering and performance")
+scripts/prerender.mjs   post-build: injects prerendered HTML and the body-font preload into dist/index.html
 public/brand/           logos and brand imagery (pulled from the live site; brand-kit files will replace them)
 public/brand/partners/  partner logos
+public/brand/products/  real screenshots of Sumic's own products (desktop + phone)
+brand-originals/        unmodified source files for everything in public/brand (not served)
 ```
 
 Import from `src` using the `@/` alias (`@/components/ui/button`).
@@ -82,20 +86,36 @@ Import from `src` using the `@/` alias (`@/components/ui/button`).
 
 ### Animation
 
-- Use Motion (`import { motion } from 'motion/react'`) for scroll reveals and micro-interactions.
-- Every animation respects `prefers-reduced-motion` (use `useReducedMotion()` or `MotionConfig reducedMotion="user"`).
+- Use Motion for scroll reveals and micro-interactions, via the lightweight `m.*` components (`import { m } from 'motion/react'`). App.tsx wraps everything in `<LazyMotion strict>`, which loads the animation engine as a separate chunk; a full `motion.*` component throws in strict mode.
+- Above-the-fold entrance animations (hero headline, hero visual) use CSS keyframes (`animate-blur-in`, `animate-rise-in` in `index.css`) so they start on first paint of the prerendered HTML.
+- Every animation respects `prefers-reduced-motion` (`MotionConfig reducedMotion="user"` for Motion, the global CSS safety net for CSS animations).
+- Continuous motion longer than 5 seconds (hero background, logo marquee) needs a visible pause control (WCAG 2.2.2).
 - Heavy effects (WebGL/canvas backgrounds) are lazy-loaded (`React.lazy` + `Suspense`). At most one heavy effect per viewport.
 
 ### Performance
 
-- Images in WebP/AVIF, with explicit `width` and `height`.
+- Images in WebP/AVIF, with explicit `width` and `height`, and `srcSet`/`sizes` when shown much smaller than the file.
 - Lazy-load everything below the fold (`loading="lazy"`, `decoding="async"`).
 - Target Lighthouse 90+ in every category.
+
+### Rendering and performance
+
+- **Prerendered HTML.** `npm run build` renders the app to static HTML (`src/entry-server.tsx`, `scripts/prerender.mjs`); the client hydrates it (`hydrateRoot` in `main.tsx`). Dev renders client-side only.
+- **Hydration must match.** The first client render must equal the server render. Never read `window`, `document`, `navigator` or `matchMedia` during render. Use `useMediaQuery` / `useReducedMotionPreference` / `useHeavyEffects` (they return the server value during hydration, then update), or read in effects and handlers.
+- **Below-the-fold sections are lazy chunks** (`React.lazy` + `Suspense` in `HomePage.tsx`). The prerender waits for them, so the HTML is complete.
+- **Keep HomePage static.** State that changes after load (like the active nav section) lives in small child components (`SiteNavbar`). Updates pushed into sections that are still hydrating make React throw away their prerendered DOM and re-render them.
+- **Below-the-fold blocks use `defer-render`** (`content-visibility: auto`) so the browser skips their layout until they are near view.
+- **Measuring:** Lighthouse's default simulated mobile throttling is unreliable against localhost (the JS arrives instantly and gets counted as render-blocking). Measure mobile with `--throttling-method=devtools`, or with PageSpeed Insights on the deployed site.
 
 ### Navigation
 
 - `NavLink.href` is the canonical page URL. `NavLink.sectionId` maps a link to a home page section; `navHref()` in `src/lib/nav.ts` resolves such links to `#<sectionId>` while the home page is the only page.
 - Every home section is a `<Section id=...>`, and its id must be listed in `homeSectionIds` for active-link tracking.
+
+### Product screenshots
+
+- The products section shows real screenshots of each live product (`public/brand/products/`), not drawn mockups. Capture desktop at 1440×900 and phone at 390×844 @2x, dismiss cookie banners with "Reject all", wait for images, then convert to WebP (desktop 1440w/720w, phone 780w/390w). Keep originals in `brand-originals/products/`.
+- Re-capture when a product's homepage changes (see the TODO in `src/content/home.ts`).
 
 ### React Bits
 

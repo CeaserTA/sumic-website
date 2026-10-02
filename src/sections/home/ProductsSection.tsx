@@ -1,21 +1,16 @@
-import { useId, type ComponentType } from 'react'
+import { useId } from 'react'
 import { ArrowUpRightIcon, CircleCheckIcon } from 'lucide-react'
 
 import { Section } from '@/components/layout/Section'
 import { Reveal } from '@/components/motion/Reveal'
 import { Button } from '@/components/ui/button'
-import type { HomeProducts, ProductFeature, ProductId } from '@/content/home'
+import type { HomeProducts, ProductFeature } from '@/content/home'
 import { ui } from '@/content/ui'
 import { cn } from '@/lib/utils'
-import { SumicOnlineVisual, TalentKasiVisual } from '@/sections/home/ProductVisuals'
+import { ProductScreens } from '@/sections/home/ProductScreens'
 
 interface ProductsSectionProps {
   content: HomeProducts
-}
-
-const visuals: Record<ProductId, ComponentType<{ name: string }>> = {
-  'talent-kasi': TalentKasiVisual,
-  'sumic-online': SumicOnlineVisual,
 }
 
 export function ProductsSection({ content }: ProductsSectionProps) {
@@ -33,7 +28,6 @@ export function ProductsSection({ content }: ProductsSectionProps) {
           <ProductRow
             key={product.id}
             product={product}
-            visual={visuals[product.id]}
             // Alternate: visual on the right, then on the left.
             visualPosition={index % 2 === 0 ? 'end' : 'start'}
           />
@@ -45,11 +39,10 @@ export function ProductsSection({ content }: ProductsSectionProps) {
 
 interface ProductRowProps {
   product: ProductFeature
-  visual: ComponentType<{ name: string }>
   visualPosition: 'start' | 'end'
 }
 
-function ProductRow({ product, visual: Visual, visualPosition }: ProductRowProps) {
+function ProductRow({ product, visualPosition }: ProductRowProps) {
   const titleId = useId()
 
   return (
@@ -93,7 +86,8 @@ function ProductRow({ product, visual: Visual, visualPosition }: ProductRowProps
         </Button>
       </Reveal>
       <Reveal index={1}>
-        <Visual name={product.name} />
+        {/* Phone overlaps on the side facing the text, mirroring between rows. */}
+        <ProductScreens product={product} phoneSide={visualPosition === 'end' ? 'start' : 'end'} />
       </Reveal>
     </article>
   )

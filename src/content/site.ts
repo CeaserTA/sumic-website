@@ -43,6 +43,9 @@ export interface SiteContent {
     src: string
     /** White/green logo for dark backgrounds. */
     inverseSrc: string
+    /** Responsive candidates (160w and 320w) for each variant. */
+    srcSet: string
+    inverseSrcSet: string
     width: number
     height: number
     alt: string
@@ -83,6 +86,9 @@ export const site: SiteContent = {
   logo: {
     src: '/brand/sumic-logo-320w.webp',
     inverseSrc: '/brand/sumic-logo-inverse-320w.webp',
+    srcSet: '/brand/sumic-logo-160w.webp 160w, /brand/sumic-logo-320w.webp 320w',
+    inverseSrcSet:
+      '/brand/sumic-logo-inverse-160w.webp 160w, /brand/sumic-logo-inverse-320w.webp 320w',
     width: 320,
     height: 222,
     alt: 'Sumic IT Solutions',

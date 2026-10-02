@@ -1,5 +1,5 @@
 import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+import { createRoot, hydrateRoot } from 'react-dom/client'
 
 import { App } from '@/App'
 
@@ -8,8 +8,12 @@ import './index.css'
 const root = document.getElementById('root')
 if (!root) throw new Error('Root element #root not found')
 
-createRoot(root).render(
+const app = (
   <StrictMode>
     <App />
-  </StrictMode>,
+  </StrictMode>
 )
+
+// Production HTML is prerendered at build time (scripts/prerender.mjs); dev renders from scratch.
+if (root.hasChildNodes()) hydrateRoot(root, app)
+else createRoot(root).render(app)

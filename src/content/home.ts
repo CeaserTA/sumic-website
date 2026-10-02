@@ -102,13 +102,48 @@ export const homeServices: HomeServices = {
 
 export type ProductId = 'talent-kasi' | 'sumic-online'
 
+export interface Screenshot {
+  src: string
+  srcSet: string
+  width: number
+  height: number
+  alt: string
+}
+
 export interface ProductFeature {
   name: string
   /** One line in the product's own wording. */
   description: string
   features: readonly string[]
   href: string
+  /** Shown in the browser frame's address bar. */
+  domain: string
   linkLabel: string
+  /** Real screenshots of the live product (desktop 1440×900, phone 390×844 @2x). */
+  screenshots: { desktop: Screenshot; mobile: Screenshot }
+}
+
+// Captured from the live product sites on 2026-10-02 (cookie banner dismissed with
+// "Reject all"). Originals in brand-originals/products/.
+// TODO: re-capture when the products' homepages change.
+function productScreenshots(id: string, name: string): ProductFeature['screenshots'] {
+  const base = `/brand/products/${id}`
+  return {
+    desktop: {
+      src: `${base}-desktop-1440w.webp`,
+      srcSet: `${base}-desktop-720w.webp 720w, ${base}-desktop-1440w.webp 1440w`,
+      width: 1440,
+      height: 900,
+      alt: `${name} homepage on desktop`,
+    },
+    mobile: {
+      src: `${base}-mobile-780w.webp`,
+      srcSet: `${base}-mobile-390w.webp 390w, ${base}-mobile-780w.webp 780w`,
+      width: 780,
+      height: 1688,
+      alt: `${name} homepage on a phone`,
+    },
+  }
 }
 
 export interface HomeProducts {
@@ -135,7 +170,9 @@ export const homeProducts: HomeProducts = {
         'One hiring dashboard to shortlist, update status and email candidates.',
       ],
       href: 'https://talentkasi.com/',
+      domain: 'talentkasi.com',
       linkLabel: 'Visit Talent Kasi',
+      screenshots: productScreenshots('talent-kasi', 'Talent Kasi'),
     },
     {
       // Source: sumiconline.com (title and meta description). /about/ also calls it B2B2C.
@@ -149,19 +186,129 @@ export const homeProducts: HomeProducts = {
         'Access integrated logistics on the same platform.',
       ],
       href: 'https://sumiconline.com/',
+      domain: 'sumiconline.com',
       linkLabel: 'Visit Sumic Online',
+      screenshots: productScreenshots('sumic-online', 'Sumic Online'),
     },
   ],
 }
 
-export interface HomePlaceholder {
-  id: Exclude<HomeSectionId, 'hero' | 'about' | 'services' | 'products'>
-  title: string
-  note: string
+export interface Stat {
+  value: number
+  /** CountUp start value (e.g. 2000 for a year). */
+  from?: number
+  suffix?: string
+  label: string
 }
 
-// Placeholder content until each section is built. Titles are the live site's headings.
-export const homePlaceholders: readonly HomePlaceholder[] = [
-  { id: 'proof', title: 'Our partners', note: 'TODO: partners and proof section' },
-  { id: 'cta', title: 'Talk to us', note: 'TODO: call-to-action section' },
-]
+export interface ProcessStep {
+  title: string
+  text: string
+}
+
+export interface HomeProof {
+  eyebrow: string
+  title: string
+  stats: readonly Stat[]
+  process: { title: string; intro: string; steps: readonly ProcessStep[] }
+  partnersTitle: string
+  testimonialsTitle: string
+}
+
+export const homeProof: HomeProof = {
+  eyebrow: 'Why Sumic',
+  title: 'A track record built in Kampala since 2019.',
+  // Numbers from the live site only:
+  // - 2019: founding year (home + /about/)
+  // - 1K+ satisfied clients: /about/ "Statistics" (confirmed by Sumic)
+  // - 200+ interns trained: /about/ "trained over 200 interns"
+  // - 3 continents: clients and partners "across Africa, Asia and Europe" (home)
+  // Not rendered:
+  // - TODO: confirm "50+ Projects Completed" (/about/). It reads oddly beside 1K+ clients.
+  // - "5% Young Women" and "1M+ Sumic Visitors" (/about/) have no context to present them.
+  stats: [
+    { value: 2019, from: 2000, label: 'Founded in Kampala' },
+    { value: 1, suffix: 'K+', label: 'Satisfied clients' },
+    { value: 200, suffix: '+', label: 'Interns trained' },
+    { value: 3, label: 'Continents with clients and partners' },
+  ],
+  // Source: /about/ "Our Development Lifecycle" (six steps), tightened.
+  process: {
+    title: 'How we work',
+    intro:
+      'Every project follows the same lifecycle, from the first conversation to long-term care.',
+    steps: [
+      {
+        title: 'Planning',
+        text: 'We gather everything we need from you to plan a solution that meets your expectations.',
+      },
+      {
+        title: 'Designing',
+        text: 'We turn your requirements into a system architecture and choose the technology stack.',
+      },
+      {
+        title: 'Building',
+        text: 'Our developers build the system with the languages and methods best suited to it.',
+      },
+      {
+        title: 'Testing',
+        text: 'We evaluate quality and fix defects before anything reaches your users.',
+      },
+      {
+        title: 'Deployment',
+        text: 'We release the software and check it for deployment issues.',
+      },
+      {
+        title: 'Maintenance',
+        text: 'Under a service level agreement, we keep the system performing to its original specification.',
+      },
+    ],
+  },
+  partnersTitle: 'Our partners',
+  testimonialsTitle: 'What our clients say',
+}
+
+export interface FaqItem {
+  question: string
+  answer: string
+}
+
+export interface HomeCta {
+  title: string
+  text: string
+  primary: NavLink
+  secondary: NavLink
+  faqTitle: string
+  faq: readonly FaqItem[]
+}
+
+export const homeCta: HomeCta = {
+  // /about/ closing band: "Would you like to start a project with us? Sumic IT Solutions Ltd is
+  // ready to work with you! … Talk to us Today." with an "Email us" button.
+  title: 'Would you like to start a project with us?',
+  text: 'Sumic IT Solutions is ready to work with you. Tell us what you want to build.',
+  primary: { label: 'Email us', href: `mailto:${site.contact.email}` },
+  secondary: { label: `Call ${site.contact.phone.display}`, href: site.contact.phone.href },
+  faqTitle: 'Good to know',
+  // Every answer comes from live-site content (home, /services/, /about/).
+  faq: [
+    {
+      question: 'Where is Sumic IT Solutions based?',
+      answer: `Our office is on New Port Bell Road, Kampala (P.O. Box 172928, Kampala GPO). We work with clients and strategic partners across Africa, Asia and Europe.`,
+    },
+    {
+      question: 'Do you build apps for both Android and iOS?',
+      answer:
+        'Yes. We build custom mobile apps for Android and iOS and take them from wireframes to deployment.',
+    },
+    {
+      question: 'Do you support software after launch?',
+      answer:
+        'Yes. Ongoing support is part of our development approach, and maintenance runs under a service level agreement so your system keeps performing to specification.',
+    },
+    {
+      question: 'How do I start a website or mobile app project?',
+      answer: `Fill in our website or mobile app checklist form so we understand your goals, features, users, budget and timelines, or email us at ${site.contact.email}.`,
+    },
+  ],
+}

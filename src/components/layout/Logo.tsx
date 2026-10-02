@@ -9,6 +9,8 @@ interface LogoProps {
   href?: string | null
   /** Above-the-fold logos load eagerly with high priority. */
   priority?: boolean
+  /** Rendered width hint for srcset selection. */
+  sizes?: string
   className?: string
 }
 
@@ -16,11 +18,14 @@ export function Logo({
   variant = 'default',
   href = '#hero',
   priority = false,
+  sizes = '(min-width: 1024px) 81px, 64px',
   className,
 }: LogoProps) {
   const image = (
     <img
       src={variant === 'inverse' ? site.logo.inverseSrc : site.logo.src}
+      srcSet={variant === 'inverse' ? site.logo.inverseSrcSet : site.logo.srcSet}
+      sizes={sizes}
       // Inside a link the link's label names it; standalone it needs its own alt.
       alt={href === null ? site.logo.alt : ''}
       width={site.logo.width}

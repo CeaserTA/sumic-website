@@ -3,25 +3,29 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#f3f5f5" />
+    <meta name="theme-color" content="#013250" />
     <!-- Icons generated from the site logo; replace with brand-kit icons when available. -->
     <link rel="icon" type="image/png" sizes="32x32" href="/brand/favicon-32.png" />
     <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png" />
-    <link rel="preload" as="image" href="/brand/sumic-logo-320w.webp" type="image/webp" />
-    <title>Sumic IT Solutions</title>
+    <!-- The inverse logo preload is emitted by React in the prerendered markup (fetchPriority="high"). -->
+    <title>Sumic IT Solutions | Affordable digital solutions for African SMEs</title>
     <meta
       name="description"
-      content="We are digital transformation solutions providers on the African Continent established in 2019. Developers of Sumic Online a robust e-commerce Platform."
+      content="Sumic IT Solutions builds affordable digital solutions for African SMEs: mobile apps, custom software, AI and data analysis. Based in Kampala since 2019."
     />
     <!-- Absolute URLs assume the rebuild is deployed at sumicitsolutions.com. -->
+    <link rel="canonical" href="https://sumicitsolutions.com/" />
     <meta property="og:site_name" content="Sumic IT Solutions Ltd" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:url" content="https://sumicitsolutions.com/" />
-    <meta property="og:title" content="Sumic IT Solutions" />
+    <meta
+      property="og:title"
+      content="Sumic IT Solutions | Affordable digital solutions for African SMEs"
+    />
     <meta
       property="og:description"
-      content="We are digital transformation solutions providers on the African Continent established in 2019. Developers of Sumic Online a robust e-commerce Platform."
+      content="Mobile apps, custom software, AI and data analysis for growing businesses. Based in Kampala, Uganda, since 2019."
     />
     <meta property="og:image" content="https://sumicitsolutions.com/brand/sumic-og-1200x630.jpg" />
     <meta property="og:image:width" content="1200" />
@@ -29,6 +33,41 @@
     <meta property="og:image:alt" content="Sumic IT Solutions logo" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@SumicUg" />
+    <meta
+      name="twitter:title"
+      content="Sumic IT Solutions | Affordable digital solutions for African SMEs"
+    />
+    <meta
+      name="twitter:description"
+      content="Mobile apps, custom software, AI and data analysis for growing businesses. Based in Kampala, Uganda, since 2019."
+    />
+    <!-- Organization data from src/content/site.ts (live-site facts only). -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Sumic IT Solutions Ltd",
+        "url": "https://sumicitsolutions.com/",
+        "logo": "https://sumicitsolutions.com/brand/sumic-logo.webp",
+        "foundingDate": "2019",
+        "email": "info@sumicitsolutions.com",
+        "telephone": "+256200930793",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "New Port Bell Road",
+          "postOfficeBoxNumber": "172928",
+          "addressLocality": "Kampala",
+          "addressCountry": "UG"
+        },
+        "sameAs": [
+          "https://www.facebook.com/sumic.itsolutions/",
+          "https://x.com/SumicUg",
+          "https://www.instagram.com/sumicitsolutions",
+          "https://www.linkedin.com/company/sumic-it-solutions/",
+          "https://www.youtube.com/@sumicitsolutions"
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
