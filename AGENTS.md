@@ -28,20 +28,23 @@ src/
   components/layout/    SiteLayout, Navbar, MobileNav (+ lazy MobileNavSheet), Footer, Container, Section,
                         Logo, AppLink, BackToTop, ScrollManager, RouteMeta
   components/blocks/    shared page blocks: PageHero, CtaBand, FeatureList, Prose, LegalDocument,
-                        TableOfContents, PeopleGrid, OrgTree
-  components/icons/     brand icons lucide doesn't ship (SocialIcon)
+                        TableOfContents, PeopleGrid, OrgTree, StatementCard, PartnerLogos (logo + static grid)
+  components/icons/     brand icons lucide doesn't ship (SocialIcon); serviceIcons (one icon per service)
   components/motion/    MotionScope (Motion providers) and Reveal
-  sections/home/        one file per home page section
+  sections/home/        one file per home page section (StatsRow, ProcessTimeline are reused on About)
+  sections/services/    ServiceDetail (+ FeaturedServiceDetail), ServiceNav
   content/              ALL copy and data as typed TS objects
                           site.ts (company, nav, contact), services.ts, partners.ts,
                           home.ts (all home section copy), pages.ts (every route: path, title, description,
                           breadcrumb, hero copy) + redirects, company.ts (Sumic meaning, founder, governance + team),
-                          legal/ (privacy, cookies, terms as typed blocks), testimonials.ts,
+                          about.ts (About page), services-page.ts (Services page long copy, loaded
+                          with that page only), legal/ (privacy, cookies, terms as typed blocks), testimonials.ts,
                           ui.ts (interface labels, a11y names)
   pages/                one component per route (HomePage, PlannedPage, NotFoundPage, ...)
   routes/               AppRoutes (route table), meta.ts (head tags per path), pageModules.ts
                         (code-split page modules + preloadRoute), lazyWithPreload
-  hooks/  lib/
+  hooks/                useActiveSection (in-page nav highlight), useScrolledPast, useMediaQuery, ...
+  lib/
   entry-server.tsx      build-time prerender entry (see "Rendering and performance")
 scripts/prerender.mjs   post-build: prerenders every route to dist/<path>/index.html (+ 404.html, redirect
                         stubs, sitemap.xml)
@@ -49,7 +52,7 @@ docs/redesign-plan.md   site audit, sitemap, redirects, forms and build order fo
 public/brand/           logos and brand imagery (pulled from the live site; brand-kit files will replace them)
 public/brand/partners/  partner logos
 public/brand/products/  real screenshots of Sumic's own products (desktop + phone)
-public/images/          page photography and diagrams as WebP (team/, governance/)
+public/images/          page photography and diagrams as WebP (team/, governance/, about/, services/)
 brand-originals/        unmodified source files for everything in public/brand and public/images (not served)
 ```
 
@@ -61,6 +64,7 @@ Import from `src` using the `@/` alias (`@/components/ui/button`).
 
 - TypeScript strict. No `any`, including `as any`. Model unknown data with `unknown` and narrow it.
 - Functional components only. Named exports only (no `export default` in `src/`).
+- Reuse before duplicating: when another page needs a home component, move it to `components/blocks/` or add an explicit variant (e.g. `ProcessTimeline headingLevel={2}` when it is a section of its own).
 - Prefer composition over boolean props: build components from small parts and expose explicit variants (for example `ServiceCard` / `FeaturedServiceCard`), not `featured`/`dark` flags.
 - Scroll reveals use `<Reveal>`; inside lists use `<Reveal as="li">` so the markup stays valid.
 - Component files use PascalCase (`HeroSection.tsx`). shadcn's kebab-case files in `components/ui/` are the exception.
@@ -74,7 +78,8 @@ Import from `src` using the `@/` alias (`@/components/ui/button`).
 - Company email is **it@sumiconline.com** everywhere (`site.contact.email`); visible text and `mailto:` must match.
 - Stats are shown exactly as on the live site (`homeProof.stats` in `home.ts`), with no added explanations.
 - **Legal text is verbatim.** `src/content/legal/*.ts` hold the live privacy, cookies and terms text as typed blocks (`types.ts`): h2s carry slug ids for the table of contents; the document title lives in the hero and "Last updated" in `lastUpdated`. Only frontend presentation may change, never wording. Each legal route loads only its own document module (`legalPage()` in `routes/pageModules.ts`).
-- Rewritten company copy (company.ts) keeps the live original in a JSDoc comment above it, so changes stay reviewable.
+- Rewritten copy (company.ts, about.ts, services-page.ts, services.ts checklist forms) keeps the live original in a JSDoc comment above it, so changes stay reviewable.
+- Service lists ("What's included") name only items stated in the live service text.
 - Team photos: one square crop per person (640w/320w WebP, `teamPhoto()` in company.ts); alt text is "Name, Role" (PeopleGrid builds it).
 - **Sample testimonials never ship.** Fictional testimonials for layout work must have `isSample: true` and be defined inside the `import.meta.env.DEV` branch in `src/content/testimonials.ts`. Render only `visibleTestimonials`, which excludes samples in production. Production builds must contain no sample text, and the testimonials block stays hidden until real, consented testimonials are added to `realTestimonials`. In dev, samples show a "Sample content" badge.
 
@@ -140,6 +145,8 @@ Import from `src` using the `@/` alias (`@/components/ui/button`).
 - **Route changes:** `ScrollManager` scrolls to the top (or the `#hash`) and moves focus to `#main`; `RouteMeta` updates the title, description and canonical. The prerender writes the same head tags into each page's HTML.
 - **Redirects** for retired URLs live in `redirects` in `src/content/pages.ts` (e.g. `/what-are-cookies/` → `/cookies-policy/#what-are-cookies`). The app handles them with `<Navigate>`; the prerender writes a stub HTML page (meta refresh, canonical, noindex) for static hosts. Prefer real 301s at the host when it's set up.
 - **Long documents** use `<TableOfContents>` (collapsible on mobile, sticky from lg) with a ~70-character measure (`max-w-[40rem]` at text-lg; `ch` overshoots in Satoshi). Long URLs in text get `wrap-anywhere`, and grid columns holding prose use `minmax(0,1fr)` so they can't overflow at 360px.
+- **Services deep links:** each service has an `anchor` and `href` (`/services/#mobile-app-development`) in `services.ts`; the home cards, footer and Services page nav all use them. Service sections are focusable (`tabIndex={-1}`) and are not `defer-render`, so anchor jumps land precisely. `ScrollManager` waits (up to 3s) for a lazily rendered page to produce the `#hash` target.
+- **In-page navs** (TableOfContents, ServiceNav) use `useActiveSection(ids)` for the current-section highlight (`aria-current="location"`).
 - **404:** unknown paths render `NotFoundPage`; the build writes `dist/404.html` (noindex). The host must serve `404.html` with a 404 status for unknown URLs, and serve `/<path>/index.html` for directory URLs (with a trailing-slash redirect).
 
 ### Product screenshots

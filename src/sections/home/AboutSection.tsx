@@ -1,9 +1,9 @@
-import { TargetIcon, TelescopeIcon, type LucideIcon } from 'lucide-react'
+import { TargetIcon, TelescopeIcon } from 'lucide-react'
 
+import { StatementCard } from '@/components/blocks/StatementCard'
 import { Section } from '@/components/layout/Section'
 import { Reveal } from '@/components/motion/Reveal'
-import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import type { HomeAbout, Statement } from '@/content/home'
+import type { HomeAbout } from '@/content/home'
 import type { Product } from '@/content/site'
 import { cn } from '@/lib/utils'
 import { EcosystemPanel } from '@/sections/home/EcosystemPanel'
@@ -50,24 +50,5 @@ export function AboutSection({ content, products }: AboutSectionProps) {
         </Reveal>
       </div>
     </Section>
-  )
-}
-
-function StatementCard({ statement, icon: Icon }: { statement: Statement; icon: LucideIcon }) {
-  return (
-    // Subtle dark-green tint and border give the two statements more weight than plain cards.
-    <Card className="h-full bg-brand-accent-ink/5 ring-brand-accent-ink/25">
-      <CardHeader className="gap-4">
-        <span className="flex size-12 items-center justify-center rounded-xl bg-brand-accent text-brand-accent-foreground">
-          <Icon aria-hidden="true" className="size-6" />
-        </span>
-        <CardTitle>
-          <h3 className="text-xl">{statement.title}</h3>
-        </CardTitle>
-        <CardDescription className="text-lg text-pretty text-brand-heading">
-          {statement.text}
-        </CardDescription>
-      </CardHeader>
-    </Card>
   )
 }

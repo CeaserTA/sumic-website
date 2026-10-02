@@ -1,4 +1,5 @@
 import type { NavLink } from '@/content/site'
+import { checklistForms } from '@/content/services'
 import { site } from '@/content/site'
 
 /**
@@ -77,14 +78,11 @@ export const homeServices: HomeServices = {
   // Forms and descriptions from /services/ ("Client Checklist Form" section).
   checklist: {
     text: 'Planning a website or mobile app? Our checklist forms capture your goals, features, users, budget and timelines before we start.',
-    links: [
-      { label: 'Website checklist', href: 'https://forms.gle/tKaBT39AWJqJDHb98', external: true },
-      {
-        label: 'Mobile app checklist',
-        href: 'https://forms.gle/bmbxCA1CLruqx9fG6',
-        external: true,
-      },
-    ],
+    links: checklistForms.map((form) => ({
+      label: form.shortLabel,
+      href: form.href,
+      external: true,
+    })),
   },
 }
 

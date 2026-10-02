@@ -13,15 +13,14 @@ import { cn } from '@/lib/utils'
 
 interface FooterProps {
   site: SiteContent
+  /** Each links to its section on the Services page. */
   services: readonly Service[]
-  /** Where the services list links to. */
-  servicesHref?: string
 }
 
 const linkClass =
   'rounded-sm text-brand-primary-foreground/75 transition-colors hover:text-brand-accent'
 
-export function Footer({ site, services, servicesHref = '/services/' }: FooterProps) {
+export function Footer({ site, services }: FooterProps) {
   const year = new Date().getFullYear()
   const quickLinksId = useId()
   const servicesId = useId()
@@ -80,7 +79,7 @@ export function Footer({ site, services, servicesHref = '/services/' }: FooterPr
           <FooterColumn id={servicesId} title={ui.footer.services} className="lg:col-span-3">
             {services.map((service) => (
               <li key={service.title}>
-                <AppLink href={servicesHref} className={linkClass}>
+                <AppLink href={service.href} className={linkClass}>
                   {service.shortTitle ?? service.title}
                 </AppLink>
               </li>

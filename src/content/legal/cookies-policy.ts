@@ -1,9 +1,11 @@
 import type { LegalDocument } from '@/content/legal/types'
+import { site } from '@/content/site'
 
 /**
  * Cookies Policy: text verbatim from the live site (crawled 2026-10-02). Do not edit wording.
  * Only structure changed: heading levels, the page title moved to the PageHero, internal links
- * point at the new routes, the dead Microsoft link (kb/278835, 404) is replaced with the current equivalent page, and "What Are Cookies" (/what-are-cookies/) is merged in as the last section.
+ * point at the new routes, the dead Microsoft link (kb/278835, 404) is replaced with the current equivalent page, "What Are Cookies" (/what-are-cookies/) is merged in as the last section (without its leftover
+ * template line), and the contact email is the company's current address (it@sumiconline.com).
  */
 export const cookiesPolicy: LegalDocument = {
   lastUpdated: 'Last updated: September 05, 2023',
@@ -239,7 +241,7 @@ export const cookiesPolicy: LegalDocument = {
     },
     {
       type: 'p',
-      content: ['By email: info@sumicitsolutions.com'],
+      content: ['By email: ', { link: site.contact.email, href: `mailto:${site.contact.email}` }],
     },
     {
       type: 'p',
@@ -378,12 +380,6 @@ export const cookiesPolicy: LegalDocument = {
           'Websites often include cookie consent pop-ups or banners, allowing users to choose whether to accept cookies.',
         ],
         ['Browser extensions and privacy tools can help users control their cookie settings.'],
-      ],
-    },
-    {
-      type: 'p',
-      content: [
-        'Your webpage about cookies should cover these key points, providing a comprehensive understanding of what cookies are, how they work, their types, common uses, privacy concerns, and ways to manage them. Additionally, you may want to discuss the legal and ethical aspects of cookie usage, especially in light of evolving data privacy regulations.',
       ],
     },
   ],

@@ -6,11 +6,13 @@ import { pages, redirects, type PageId } from '@/content/pages'
 import { HomePage } from '@/pages/HomePage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 import {
+  AboutPage,
   CookiesPolicyPage,
   FounderPage,
   GovernancePage,
   PlannedPage,
   PrivacyPolicyPage,
+  ServicesPage,
   SumicMeaningPage,
   TermsOfUsePage,
 } from '@/routes/pageModules'
@@ -30,6 +32,10 @@ function pageElement(id: PageId): ReactNode {
       return <FounderPage />
     case 'team':
       return <GovernancePage />
+    case 'about':
+      return <AboutPage />
+    case 'services':
+      return <ServicesPage />
     default:
       return <PlannedPage pageId={id} />
   }

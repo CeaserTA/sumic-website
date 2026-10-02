@@ -52,10 +52,12 @@ export const pages: readonly PageMeta[] = [
     description:
       'Founded in 2019 in Kampala, Sumic IT Solutions Ltd is a technology and digital transformation company. Our history, vision, mission, values and how we work.',
     breadcrumb: 'About',
-    status: 'planned',
+    status: 'built',
     hero: {
       title: 'About us',
-      intro: 'A digitally empowered world where technology uplifts businesses and communities.',
+      // Live hero line is the vision statement, which the page shows in its own card below.
+      intro:
+        'Founded in 2019, Sumic IT Solutions Ltd is a technology and digital transformation company serving businesses across Uganda and beyond.',
     },
   },
   {
@@ -105,7 +107,7 @@ export const pages: readonly PageMeta[] = [
     description:
       'Mobile apps, software development, AI models, data analysis, ITES & BPO and digital marketing from Sumic IT Solutions Ltd.',
     breadcrumb: 'Services',
-    status: 'planned',
+    status: 'built',
     hero: {
       title: 'Services',
       intro:

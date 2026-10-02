@@ -1,7 +1,9 @@
 import type { LegalDocument } from '@/content/legal/types'
+import { site } from '@/content/site'
 
 /**
  * Privacy Policy: text verbatim from the live site (crawled 2026-10-02). Do not edit wording.
+ * Contact email updated to the company's current address (it@sumiconline.com), per the company.
  * Only structure changed: heading levels, the page title moved to the PageHero, internal links
  * point at the new routes.
  */
@@ -634,7 +636,7 @@ export const privacyPolicy: LegalDocument = {
     },
     {
       type: 'p',
-      content: ['By email: info@sumicitsolutions.com'],
+      content: ['By email: ', { link: site.contact.email, href: `mailto:${site.contact.email}` }],
     },
     {
       type: 'p',

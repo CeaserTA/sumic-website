@@ -2,6 +2,7 @@ import { useId, useRef, useState } from 'react'
 import { useInView } from 'motion/react'
 import { PauseIcon, PlayIcon } from 'lucide-react'
 
+import { PartnerLogo, PartnerLogoGrid } from '@/components/blocks/PartnerLogos'
 import { LogoLoop } from '@/components/effects/LogoLoop'
 import { Button } from '@/components/ui/button'
 import type { Partner } from '@/content/partners'
@@ -11,19 +12,6 @@ import { useReducedMotionPreference } from '@/hooks/useHeavyEffects'
 interface PartnersMarqueeProps {
   title: string
   partners: readonly Partner[]
-}
-
-function PartnerLogo({ partner }: { partner: Partner }) {
-  return (
-    <img
-      src={partner.logo.src}
-      alt={partner.name}
-      width={partner.logo.width}
-      height={partner.logo.height}
-      decoding="async"
-      className="h-11 w-auto max-w-44 object-contain opacity-85 grayscale transition-[filter,opacity] duration-300 hover:opacity-100 hover:grayscale-0"
-    />
-  )
 }
 
 /**
@@ -71,16 +59,7 @@ export function PartnersMarquee({ title, partners }: PartnersMarqueeProps) {
       </div>
 
       {reduceMotion ? (
-        <ul
-          aria-labelledby={titleId}
-          className="flex flex-wrap items-center justify-center gap-x-10 gap-y-6"
-        >
-          {partners.map((partner) => (
-            <li key={partner.name}>
-              <PartnerLogo partner={partner} />
-            </li>
-          ))}
-        </ul>
+        <PartnerLogoGrid partners={partners} labelledBy={titleId} />
       ) : (
         <div
           role="region"

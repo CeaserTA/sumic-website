@@ -1,39 +1,13 @@
-import { useEffect, useId, useMemo, useState } from 'react'
+import { useId, useMemo } from 'react'
 import { ChevronDownIcon } from 'lucide-react'
 
 import { ui } from '@/content/ui'
+import { useActiveSection } from '@/hooks/useActiveSection'
 import { cn } from '@/lib/utils'
 
 export interface TocItem {
   id: string
   label: string
-}
-
-/** Id of the heading nearest the top of the viewport (a leaf state, so pages stay static). */
-function useActiveHeading(ids: readonly string[]): string | null {
-  const [active, setActive] = useState<string | null>(null)
-
-  useEffect(() => {
-    const visible = new Set<string>()
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) visible.add(entry.target.id)
-          else visible.delete(entry.target.id)
-        }
-        const first = ids.find((id) => visible.has(id))
-        if (first) setActive(first)
-      },
-      { rootMargin: '-15% 0px -70% 0px' },
-    )
-    for (const id of ids) {
-      const el = document.getElementById(id)
-      if (el) observer.observe(el)
-    }
-    return () => observer.disconnect()
-  }, [ids])
-
-  return active
 }
 
 function TocList({ items, active }: { items: readonly TocItem[]; active: string | null }) {
@@ -64,7 +38,7 @@ function TocList({ items, active }: { items: readonly TocItem[]; active: string 
 export function TableOfContents({ items }: { items: readonly TocItem[] }) {
   const titleId = useId()
   const ids = useMemo(() => items.map((item) => item.id), [items])
-  const active = useActiveHeading(ids)
+  const active = useActiveSection(ids)
 
   return (
     <>

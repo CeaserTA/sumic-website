@@ -1,16 +1,7 @@
 import type { ReactNode } from 'react'
-import {
-  ArrowUpRightIcon,
-  BrainCircuitIcon,
-  ChartNoAxesCombinedIcon,
-  ClipboardListIcon,
-  CodeXmlIcon,
-  HeadsetIcon,
-  MegaphoneIcon,
-  SmartphoneIcon,
-  type LucideIcon,
-} from 'lucide-react'
+import { ArrowUpRightIcon, ClipboardListIcon } from 'lucide-react'
 
+import { serviceIcons } from '@/components/icons/serviceIcons'
 import { Section } from '@/components/layout/Section'
 import { Reveal } from '@/components/motion/Reveal'
 import type { HomeServices } from '@/content/home'
@@ -23,15 +14,6 @@ import { GrowthChartVisual, PhoneAppsVisual } from '@/sections/home/ServiceVisua
 interface ServicesSectionProps {
   content: HomeServices
   services: readonly Service[]
-}
-
-const icons: Record<ServiceId, LucideIcon> = {
-  'mobile-apps': SmartphoneIcon,
-  software: CodeXmlIcon,
-  'ai-models': BrainCircuitIcon,
-  'data-analysis': ChartNoAxesCombinedIcon,
-  'ites-bpo': HeadsetIcon,
-  'digital-marketing': MegaphoneIcon,
 }
 
 /*
@@ -63,13 +45,13 @@ export function ServicesSection({ content, services }: ServicesSectionProps) {
               {service.id === FEATURED ? (
                 <FeaturedServiceCard
                   service={service}
-                  icon={icons[service.id]}
+                  icon={serviceIcons[service.id]}
                   learnMoreLabel={content.learnMore}
                 />
               ) : (
                 <ServiceCard
                   service={service}
-                  icon={icons[service.id]}
+                  icon={serviceIcons[service.id]}
                   learnMoreLabel={content.learnMore}
                   visual={visuals[service.id]}
                 />

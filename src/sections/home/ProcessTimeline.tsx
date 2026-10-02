@@ -9,7 +9,17 @@ interface ProcessTimelineProps {
   title: string
   intro: string
   steps: readonly ProcessStep[]
+  /**
+   * 3 inside a titled section (home "Why Sumic"); 2 when the timeline is a section of its own
+   * (About), which also sizes the title like a section heading. Step titles go one level below.
+   */
+  headingLevel?: 2 | 3
 }
+
+const headings = {
+  2: { Title: 'h2', Step: 'h3', className: 'text-3xl sm:text-4xl lg:text-5xl' },
+  3: { Title: 'h3', Step: 'h4', className: 'text-2xl font-bold sm:text-3xl' },
+} as const
 
 const lineTransition = { duration: 1.4, ease: [0.22, 1, 0.36, 1] } as const
 
@@ -17,15 +27,16 @@ const lineTransition = { duration: 1.4, ease: [0.22, 1, 0.36, 1] } as const
  * The live site's development lifecycle. Horizontal on desktop, vertical below lg.
  * The connector draws itself once in view (a transform, so reduced motion shows it static).
  */
-export function ProcessTimeline({ title, intro, steps }: ProcessTimelineProps) {
+export function ProcessTimeline({ title, intro, steps, headingLevel = 3 }: ProcessTimelineProps) {
   const titleId = useId()
+  const { Title, Step, className } = headings[headingLevel]
 
   return (
     <div className="flex flex-col gap-10">
       <div className="flex max-w-2xl flex-col gap-3">
-        <h3 id={titleId} className="text-2xl font-bold sm:text-3xl">
+        <Title id={titleId} className={className}>
           {title}
-        </h3>
+        </Title>
         <p className="text-lg text-pretty">{intro}</p>
       </div>
 
@@ -73,7 +84,7 @@ export function ProcessTimeline({ title, intro, steps }: ProcessTimelineProps) {
                   {index + 1}
                 </span>
                 <div className="flex flex-col gap-1.5 pt-1.5 lg:pt-0">
-                  <h4 className="text-lg">{step.title}</h4>
+                  <Step className="text-lg">{step.title}</Step>
                   <p className="text-pretty">{step.text}</p>
                 </div>
               </Reveal>
