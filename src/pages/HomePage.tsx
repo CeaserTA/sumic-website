@@ -1,20 +1,10 @@
 import { lazy, Suspense } from 'react'
 
-import { Navbar } from '@/components/layout/Navbar'
-import {
-  homeAbout,
-  homeCta,
-  homeHero,
-  homeProducts,
-  homeProof,
-  homeSectionIds,
-  homeServices,
-} from '@/content/home'
+import { homeAbout, homeCta, homeHero, homeProducts, homeProof, homeServices } from '@/content/home'
 import { confirmedPartners } from '@/content/partners'
 import { services } from '@/content/services'
 import { site } from '@/content/site'
 import { visibleTestimonials } from '@/content/testimonials'
-import { useActiveSection } from '@/hooks/useActiveSection'
 import { HeroSection } from '@/sections/home/HeroSection'
 
 // Below-the-fold sections load as separate chunks. The prerendered HTML already contains
@@ -34,50 +24,34 @@ const ProofSection = lazy(() =>
 const CtaSection = lazy(() =>
   import('@/sections/home/CtaSection').then((m) => ({ default: m.CtaSection })),
 )
-const Footer = lazy(() => import('@/components/layout/Footer').then((m) => ({ default: m.Footer })))
 
 /**
- * Navbar plus active-section tracking. Kept separate so scroll-driven state changes never
- * re-render HomePage (and never push updates into sections that are still hydrating).
+ * The home page's sections (the shared SiteLayout provides navbar, main and footer).
+ * Keep this component free of state: updates pushed into sections that are still hydrating
+ * make React discard their prerendered DOM.
  */
-function SiteNavbar() {
-  const activeSectionId = useActiveSection(homeSectionIds)
-  return (
-    // The hero is navy, so the transparent navbar uses white text and the inverse logo.
-    <Navbar links={site.nav} cta={site.cta} activeSectionId={activeSectionId} overlayTone="dark" />
-  )
-}
-
 export function HomePage() {
   return (
     <>
-      <SiteNavbar />
-
-      <main id="main" tabIndex={-1} className="outline-none">
-        <HeroSection content={homeHero} />
-        <Suspense fallback={null}>
-          <AboutSection content={homeAbout} products={site.products} />
-        </Suspense>
-        <Suspense fallback={null}>
-          <ServicesSection content={homeServices} services={services} />
-        </Suspense>
-        <Suspense fallback={null}>
-          <ProductsSection content={homeProducts} />
-        </Suspense>
-        <Suspense fallback={null}>
-          <ProofSection
-            content={homeProof}
-            partners={confirmedPartners}
-            testimonials={visibleTestimonials}
-          />
-        </Suspense>
-        <Suspense fallback={null}>
-          <CtaSection content={homeCta} />
-        </Suspense>
-      </main>
-
+      <HeroSection content={homeHero} />
       <Suspense fallback={null}>
-        <Footer site={site} services={services} />
+        <AboutSection content={homeAbout} products={site.products} />
+      </Suspense>
+      <Suspense fallback={null}>
+        <ServicesSection content={homeServices} services={services} />
+      </Suspense>
+      <Suspense fallback={null}>
+        <ProductsSection content={homeProducts} />
+      </Suspense>
+      <Suspense fallback={null}>
+        <ProofSection
+          content={homeProof}
+          partners={confirmedPartners}
+          testimonials={visibleTestimonials}
+        />
+      </Suspense>
+      <Suspense fallback={null}>
+        <CtaSection content={homeCta} />
       </Suspense>
     </>
   )

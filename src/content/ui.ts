@@ -19,6 +19,15 @@ export const ui = {
     pause: 'Pause logo animation',
     play: 'Play logo animation',
   },
+  backToTop: 'Back to top',
+  breadcrumb: {
+    label: 'Breadcrumb',
+  },
+  notFound: {
+    suggestionsTitle: 'Try one of these instead',
+  },
+  // Development-only marker on routes whose content is not built yet.
+  plannedPage: 'Planned page: content is built in a later phase.',
   footer: {
     quickLinks: 'Quick links',
     services: 'What we do',

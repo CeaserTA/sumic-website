@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import type { LucideIcon } from 'lucide-react'
 
 import { SpotlightCard } from '@/components/effects/SpotlightCard'
+import { AppLink } from '@/components/layout/AppLink'
 import type { Service } from '@/content/services'
 import { cn } from '@/lib/utils'
 
@@ -148,7 +149,7 @@ function ServiceCardLink({
   className?: string
 }) {
   return (
-    <a
+    <AppLink
       href={service.href}
       className={cn(
         'mt-auto w-fit rounded-sm font-medium underline underline-offset-4 transition-colors',
@@ -159,7 +160,7 @@ function ServiceCardLink({
     >
       {label}
       <span className="sr-only">: {service.shortTitle ?? service.title}</span>
-    </a>
+    </AppLink>
   )
 }
 

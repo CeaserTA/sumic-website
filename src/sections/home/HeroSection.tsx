@@ -2,6 +2,7 @@ import { useId, useState } from 'react'
 import { PauseIcon, PlayIcon } from 'lucide-react'
 
 import { BlurText } from '@/components/effects/BlurText'
+import { AppLink } from '@/components/layout/AppLink'
 import { Container } from '@/components/layout/Container'
 import { Button } from '@/components/ui/button'
 import type { HomeHero } from '@/content/home'
@@ -66,10 +67,10 @@ export function HeroSection({ content }: HeroSectionProps) {
 
           <div className="flex flex-col gap-3 sm:flex-row">
             <Button asChild variant="accent" size="lg" className="h-12 px-6 text-base">
-              <a href={navHref(content.primaryCta)}>{content.primaryCta.label}</a>
+              <AppLink href={navHref(content.primaryCta)}>{content.primaryCta.label}</AppLink>
             </Button>
             <Button asChild variant="outline-inverse" size="lg" className="h-12 px-6 text-base">
-              <a href={navHref(content.secondaryCta)}>{content.secondaryCta.label}</a>
+              <AppLink href={navHref(content.secondaryCta)}>{content.secondaryCta.label}</AppLink>
             </Button>
           </div>
 

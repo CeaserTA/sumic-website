@@ -1,32 +1,126 @@
-// Post-build step:
-// 1. injects the server-rendered App into dist/index.html so the page paints before JS runs
-// 2. preloads the critical font file (Satoshi), whose name is content-hashed by Vite
+// Post-build step: prerender every route to static HTML.
+// For each route (src/content/pages.ts) plus the 404 page it
+// 1. renders the app with the router at that URL and injects it into the HTML template
+// 2. writes the route's own <title>, description, canonical and Open Graph/Twitter tags
+// 3. preloads the critical font file (Satoshi), whose name is content-hashed by Vite
+// and writes dist/<path>/index.html (dist/404.html for the 404 page, marked noindex).
+// It also regenerates dist/sitemap.xml from the route list.
 // Runs after `vite build` and `vite build --ssr src/entry-server.tsx --outDir dist-ssr`.
-import { readdir, readFile, rm, writeFile } from 'node:fs/promises'
+import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
 const root = fileURLToPath(new URL('..', import.meta.url))
-const indexPath = `${root}dist/index.html`
+const dist = `${root}dist`
 const ssrDir = `${root}dist-ssr`
 
-const { render } = await import(pathToFileURL(`${ssrDir}/entry-server.js`).href)
-let html = await readFile(indexPath, 'utf8')
+const { render, headFor, prerenderPaths, NOT_FOUND_PATH } = await import(
+  pathToFileURL(`${ssrDir}/entry-server.js`).href
+)
+const template = await readFile(`${dist}/index.html`, 'utf8')
 
 const marker = '<div id="root"></div>'
-if (!html.includes(marker)) throw new Error(`prerender: ${marker} not found in dist/index.html`)
-html = html.replace(marker, `<div id="root">${await render()}</div>`)
+if (!template.includes(marker)) throw new Error(`prerender: ${marker} not found in dist/index.html`)
 
 // Satoshi is the only webfont: one 42 KB variable file for headings and body, used by the
 // LCP element (the hero lead paragraph), so it is worth preloading.
 const criticalFonts = [/^Satoshi-Variable-.*\.woff2$/]
-const assets = await readdir(`${root}dist/assets`)
+const assets = await readdir(`${dist}/assets`)
 const preloads = criticalFonts.map((pattern) => {
   const file = assets.find((name) => pattern.test(name))
   if (!file) throw new Error(`prerender: no font matching ${pattern}`)
   return `<link rel="preload" as="font" type="font/woff2" href="/assets/${file}" crossorigin />`
 })
-html = html.replace('</title>', `</title>\n    ${preloads.join('\n    ')}`)
 
-await writeFile(indexPath, html)
+const escape = (value) =>
+  value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+
+/** Replace a whole tag matched by `pattern` (tags may span lines after formatting). */
+function replaceTag(html, pattern, replacement) {
+  if (!pattern.test(html)) throw new Error(`prerender: tag not found: ${pattern}`)
+  return html.replace(pattern, replacement)
+}
+
+function withHead(html, head) {
+  const title = escape(head.title)
+  const description = escape(head.description)
+  let out = html
+  out = replaceTag(
+    out,
+    /<title>[\s\S]*?<\/title>/,
+    `<title>${title}</title>\n    ${preloads.join('\n    ')}`,
+  )
+  out = replaceTag(
+    out,
+    /<meta\s+name="description"[\s\S]*?\/>/,
+    `<meta name="description" content="${description}" />`,
+  )
+  out = replaceTag(
+    out,
+    /<meta\s+property="og:title"[\s\S]*?\/>/,
+    `<meta property="og:title" content="${title}" />`,
+  )
+  out = replaceTag(
+    out,
+    /<meta\s+property="og:description"[\s\S]*?\/>/,
+    `<meta property="og:description" content="${description}" />`,
+  )
+  out = replaceTag(
+    out,
+    /<meta\s+name="twitter:title"[\s\S]*?\/>/,
+    `<meta name="twitter:title" content="${title}" />`,
+  )
+  out = replaceTag(
+    out,
+    /<meta\s+name="twitter:description"[\s\S]*?\/>/,
+    `<meta name="twitter:description" content="${description}" />`,
+  )
+  if (head.noindex) {
+    // 404: not indexable, no canonical or og:url.
+    out = replaceTag(
+      out,
+      /<link\s+rel="canonical"[\s\S]*?\/>/,
+      '<meta name="robots" content="noindex" />',
+    )
+    out = replaceTag(out, /<meta\s+property="og:url"[\s\S]*?\/>/, '')
+  } else {
+    out = replaceTag(
+      out,
+      /<link\s+rel="canonical"[\s\S]*?\/>/,
+      `<link rel="canonical" href="${escape(head.canonical)}" />`,
+    )
+    out = replaceTag(
+      out,
+      /<meta\s+property="og:url"[\s\S]*?\/>/,
+      `<meta property="og:url" content="${escape(head.canonical)}" />`,
+    )
+  }
+  return out
+}
+
+const written = []
+const sitemapUrls = []
+for (const path of prerenderPaths) {
+  const head = headFor(path)
+  const html = withHead(template, head).replace(
+    marker,
+    `<div id="root">${await render(path)}</div>`,
+  )
+  const isNotFound = path === NOT_FOUND_PATH
+  const file = isNotFound ? `${dist}/404.html` : `${dist}${path}index.html`
+  await mkdir(file.slice(0, file.lastIndexOf('/')), { recursive: true })
+  await writeFile(file, html)
+  written.push(file.slice(dist.length))
+  if (!isNotFound) sitemapUrls.push(head.canonical)
+}
+
+const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated by scripts/prerender.mjs from src/content/pages.ts. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${sitemapUrls.map((url) => `  <url>\n    <loc>${url}</loc>\n  </url>`).join('\n')}
+</urlset>
+`
+await writeFile(`${dist}/sitemap.xml`, sitemap)
 await rm(ssrDir, { recursive: true, force: true })
-console.log(`prerender: wrote dist/index.html (+${preloads.length} font preloads)`)
+console.log(
+  `prerender: ${written.length} pages (${written.join(', ')}), sitemap with ${sitemapUrls.length} URLs`,
+)

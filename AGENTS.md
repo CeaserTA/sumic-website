@@ -25,16 +25,23 @@ Run `typecheck`, `lint` and `build` before calling any task done.
 src/
   components/ui/        shadcn primitives (CLI-managed; don't hand-edit unless needed)
   components/effects/   React Bits components (added as source, see below)
-  components/layout/    Navbar, MobileNav, Footer, Container, Section, Logo
+  components/layout/    SiteLayout, Navbar, MobileNav, Footer, Container, Section, Logo, AppLink,
+                        BackToTop, ScrollManager, RouteMeta
+  components/blocks/    shared page blocks: PageHero, CtaBand, FeatureList, Prose
   components/icons/     brand icons lucide doesn't ship (SocialIcon)
   components/motion/    small Motion helpers (Reveal)
   sections/home/        one file per home page section
   content/              ALL copy and data as typed TS objects
                           site.ts (company, nav, contact), services.ts, partners.ts,
-                          home.ts (all home section copy), testimonials.ts, ui.ts (interface labels, a11y names)
-  hooks/  lib/  pages/
+                          home.ts (all home section copy), pages.ts (every route: path, title, description,
+                          breadcrumb, hero copy), testimonials.ts, ui.ts (interface labels, a11y names)
+  pages/                one component per route (HomePage, PlannedPage, NotFoundPage, ...)
+  routes/               AppRoutes (route table), meta.ts (head tags per path), pageModules.ts
+                        (code-split page modules + preloadRoute), lazyWithPreload
+  hooks/  lib/
   entry-server.tsx      build-time prerender entry (see "Rendering and performance")
-scripts/prerender.mjs   post-build: injects prerendered HTML and the body-font preload into dist/index.html
+scripts/prerender.mjs   post-build: prerenders every route to dist/<path>/index.html (+ 404.html, sitemap.xml)
+docs/redesign-plan.md   site audit, sitemap, redirects, forms and build order for the remaining pages
 public/brand/           logos and brand imagery (pulled from the live site; brand-kit files will replace them)
 public/brand/partners/  partner logos
 public/brand/products/  real screenshots of Sumic's own products (desktop + phone)
@@ -105,7 +112,8 @@ Import from `src` using the `@/` alias (`@/components/ui/button`).
 - **Prerendered HTML.** `npm run build` renders the app to static HTML (`src/entry-server.tsx`, `scripts/prerender.mjs`); the client hydrates it (`hydrateRoot` in `main.tsx`). Dev renders client-side only.
 - **Hydration must match.** The first client render must equal the server render. Never read `window`, `document`, `navigator` or `matchMedia` during render. Use `useMediaQuery` / `useReducedMotionPreference` / `useHeavyEffects` (they return the server value during hydration, then update), or read in effects and handlers.
 - **Below-the-fold sections are lazy chunks** (`React.lazy` + `Suspense` in `HomePage.tsx`). The prerender waits for them, so the HTML is complete.
-- **Keep HomePage static.** State that changes after load (like the active nav section) lives in small child components (`SiteNavbar`). Updates pushed into sections that are still hydrating make React throw away their prerendered DOM and re-render them.
+- **Keep pages static.** State that changes after load lives in small leaf components (the navbar, BackToTop), never in page components. Updates pushed into sections that are still hydrating make React throw away their prerendered DOM and re-render them.
+- **Code-split pages must be preloadable.** Wrap page modules with `lazyWithPreload` in `src/routes/pageModules.ts` and extend `preloadRoute()`. `main.tsx` preloads the current route's chunk before `hydrateRoot`, so the page hydrates in place.
 - **Below-the-fold blocks use `defer-render`** (`content-visibility: auto`) so the browser skips their layout until they are near view.
 - **Measuring:** Lighthouse's default simulated mobile throttling is unreliable against localhost (the JS arrives instantly and gets counted as render-blocking). Measure mobile with `--throttling-method=devtools`, or with PageSpeed Insights on the deployed site.
 
@@ -113,8 +121,12 @@ Import from `src` using the `@/` alias (`@/components/ui/button`).
 
 - The navbar is fixed and always visible. It turns solid with a blur after the page scrolls; it never hides on scroll.
 
-- `NavLink.href` is the canonical page URL. `NavLink.sectionId` maps a link to a home page section; `navHref()` in `src/lib/nav.ts` resolves such links to `#<sectionId>` while the home page is the only page.
-- Every home section is a `<Section id=...>`, and its id must be listed in `homeSectionIds` for active-link tracking.
+- **Routes** come from `src/content/pages.ts`: the live site's slugs **with a trailing slash** (`/about/`), so existing URLs keep working without redirects. Add a page there, then add its route in `src/routes/AppRoutes.tsx`; the prerender and `sitemap.xml` pick it up automatically.
+- **Links:** use `<AppLink href>` for every link. It renders a router `<Link>` for internal routes (client-side navigation) and a plain `<a>` for external URLs, `mailto:`, `tel:`, files and `#hash` targets. `NavLink.sectionId` is only for in-page anchors (`navHref()` resolves it to `#id`).
+- **Active nav item** comes from the current route (`isActiveLink` in `src/lib/nav.ts`); a dropdown parent is active when one of its children is. The current page link gets `aria-current="page"`.
+- **Every page** renders inside `SiteLayout` (navbar, `<main id="main">`, footer, BackToTop). Inner pages start with `<PageHero>` (navy, breadcrumb, the page's single h1) and usually end with `<CtaBand>`.
+- **Route changes:** `ScrollManager` scrolls to the top (or the `#hash`) and moves focus to `#main`; `RouteMeta` updates the title, description and canonical. The prerender writes the same head tags into each page's HTML.
+- **404:** unknown paths render `NotFoundPage`; the build writes `dist/404.html` (noindex). The host must serve `404.html` with a 404 status for unknown URLs, and serve `/<path>/index.html` for directory URLs (with a trailing-slash redirect).
 
 ### Product screenshots
 

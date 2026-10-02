@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { m, useMotionValueEvent, useScroll } from 'motion/react'
 import { ArrowUpRightIcon } from 'lucide-react'
+import { useLocation } from 'react-router'
 
+import { AppLink } from '@/components/layout/AppLink'
 import { Container } from '@/components/layout/Container'
 import { Logo } from '@/components/layout/Logo'
 import { MobileNav } from '@/components/layout/MobileNav'
@@ -17,21 +19,20 @@ import {
 } from '@/components/ui/navigation-menu'
 import type { NavLink } from '@/content/site'
 import { ui } from '@/content/ui'
-import { dropdownItems, externalProps, navHref } from '@/lib/nav'
+import { dropdownItems, externalProps, isActiveLink, isInternalRoute, navHref } from '@/lib/nav'
 import { cn } from '@/lib/utils'
 
 interface NavbarProps {
   links: readonly NavLink[]
   cta: NavLink
-  /** Section currently in view; highlights the matching link. */
-  activeSectionId?: string | null
   /** Surface behind the navbar before it turns solid. Use `dark` over a navy hero. */
   overlayTone?: 'light' | 'dark'
 }
 
 const SOLID_AFTER = 8
 
-export function Navbar({ links, cta, activeSectionId = null, overlayTone = 'light' }: NavbarProps) {
+export function Navbar({ links, cta, overlayTone = 'light' }: NavbarProps) {
+  const { pathname } = useLocation()
   const { scrollY } = useScroll()
   const [solid, setSolid] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -67,7 +68,10 @@ export function Navbar({ links, cta, activeSectionId = null, overlayTone = 'ligh
               <DesktopNavItem
                 key={link.label}
                 link={link}
-                active={!!link.sectionId && link.sectionId === activeSectionId}
+                active={isActiveLink(link, pathname)}
+                current={
+                  isInternalRoute(link.href) && !link.children && isActiveLink(link, pathname)
+                }
                 dark={dark}
               />
             ))}
@@ -76,12 +80,11 @@ export function Navbar({ links, cta, activeSectionId = null, overlayTone = 'ligh
 
         <div className="flex items-center gap-2">
           <Button asChild variant="accent" size="lg" className="px-3 sm:px-4">
-            <a href={navHref(cta)}>{cta.label}</a>
+            <AppLink href={navHref(cta)}>{cta.label}</AppLink>
           </Button>
           <MobileNav
             links={links}
             cta={cta}
-            activeSectionId={activeSectionId}
             open={mobileOpen}
             onOpenChange={setMobileOpen}
             dark={dark}
@@ -94,11 +97,15 @@ export function Navbar({ links, cta, activeSectionId = null, overlayTone = 'ligh
 
 interface DesktopNavItemProps {
   link: NavLink
+  /** The link or one of its dropdown children is the current route. */
   active: boolean
+  /** The link itself is the current page (aria-current="page"). */
+  current: boolean
   dark: boolean
 }
 
-function DesktopNavItem({ link, active, dark }: DesktopNavItemProps) {
+function DesktopNavItem({ link, active, current, dark }: DesktopNavItemProps) {
+  const { pathname } = useLocation()
   const itemClass = cn(
     navigationMenuTriggerStyle(),
     // Active state is the underline only; drop Radix's data-active background.
@@ -122,14 +129,14 @@ function DesktopNavItem({ link, active, dark }: DesktopNavItemProps) {
     return (
       <NavigationMenuItem>
         <NavigationMenuLink asChild active={active} className={itemClass}>
-          <a
+          <AppLink
             href={navHref(link)}
-            aria-current={active ? 'location' : undefined}
+            aria-current={current ? 'page' : undefined}
             {...externalProps(link)}
           >
             {link.label}
             {indicator}
-          </a>
+          </AppLink>
         </NavigationMenuLink>
       </NavigationMenuItem>
     )
@@ -147,7 +154,17 @@ function DesktopNavItem({ link, active, dark }: DesktopNavItemProps) {
           {dropdownItems(link).map((item) => (
             <li key={item.label}>
               <NavigationMenuLink asChild>
-                <a href={navHref(item)} {...externalProps(item)} className="justify-between">
+                <AppLink
+                  href={navHref(item)}
+                  aria-current={
+                    isInternalRoute(item.href) &&
+                    isActiveLink({ ...item, children: undefined }, pathname)
+                      ? 'page'
+                      : undefined
+                  }
+                  {...externalProps(item)}
+                  className="justify-between"
+                >
                   {item.label}
                   {item.external && (
                     <>
@@ -155,7 +172,7 @@ function DesktopNavItem({ link, active, dark }: DesktopNavItemProps) {
                       <span className="sr-only">{ui.nav.opensInNewTab}</span>
                     </>
                   )}
-                </a>
+                </AppLink>
               </NavigationMenuLink>
             </li>
           ))}

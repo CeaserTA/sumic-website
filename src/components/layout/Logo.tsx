@@ -1,3 +1,4 @@
+import { AppLink } from '@/components/layout/AppLink'
 import { site } from '@/content/site'
 import { ui } from '@/content/ui'
 import { cn } from '@/lib/utils'
@@ -16,7 +17,7 @@ interface LogoProps {
 
 export function Logo({
   variant = 'default',
-  href = '#hero',
+  href = '/',
   priority = false,
   sizes = '(min-width: 1024px) 81px, 64px',
   className,
@@ -40,12 +41,12 @@ export function Logo({
   if (href === null) return image
 
   return (
-    <a
+    <AppLink
       href={href}
       aria-label={ui.nav.homeLink}
       className="inline-flex shrink-0 rounded-md focus-visible:outline-offset-4"
     >
       {image}
-    </a>
+    </AppLink>
   )
 }

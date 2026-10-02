@@ -13,11 +13,11 @@ export interface Service {
   /** Compact label for cards, footers and menus, when the title is long. */
   shortTitle?: string
   description: string
-  /** Live /services page for now. TODO: per-service pages on the new site. */
+  /** The Services page for now. TODO: per-service pages if the company wants them. */
   href: string
 }
 
-const SERVICES_PAGE = 'https://sumicitsolutions.com/services/'
+const SERVICES_PAGE = '/services/'
 
 export const services: readonly Service[] = [
   {

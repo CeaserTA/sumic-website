@@ -5,10 +5,10 @@
 
 export interface NavLink {
   label: string
-  /** Canonical URL. Internal routes point at pages that will exist in later phases. */
+  /** Route (with trailing slash, matching the live site's slugs) or external URL. */
   href: string
-  /** Home page section this link represents. While the home page is the only page, links with a
-   *  sectionId resolve to `#<sectionId>` (see `navHref` in lib/nav.ts) and drive the active state. */
+  /** In-page section this link targets on the current page; resolves to `#<sectionId>`
+   *  (see `navHref` in lib/nav.ts). Site navigation uses real routes instead. */
   sectionId?: string
   external?: boolean
   children?: readonly NavLink[]
@@ -93,8 +93,8 @@ export const site: SiteContent = {
     height: 222,
     alt: 'Sumic IT Solutions',
   },
-  // Live site's hero button ("Talk to us" -> /contact).
-  cta: { label: 'Talk to us', href: '/contact', sectionId: 'cta' },
+  // Live site's hero button ("Talk to us" -> /contact/).
+  cta: { label: 'Talk to us', href: '/contact/' },
   contact: {
     address: 'New Port Bell Road, P.O.BOX 172928, Kampala GPO',
     mapUrl: 'https://goo.gl/maps/fvbsxE6NsJfnmGfz8',
@@ -103,14 +103,13 @@ export const site: SiteContent = {
     hours: 'TODO: business hours not listed on the live site',
   },
   nav: [
-    { label: 'Home', href: '/', sectionId: 'hero' },
+    { label: 'Home', href: '/' },
     {
       label: 'Who We Are',
-      href: '/about',
-      sectionId: 'about',
+      href: '/about/',
       children: [
-        { label: 'Governance', href: '/team' },
-        { label: 'Sumic Meaning', href: '/sumic-meaning' },
+        { label: 'Governance', href: '/team/' },
+        { label: 'Sumic Meaning', href: '/sumic-meaning/' },
         {
           label: 'Sumic Brand Kit',
           href: 'https://drive.google.com/drive/folders/1FOC2S_tCI3QX9mhSe5Uu4f8sSVdGu3ku?usp=sharing',
@@ -121,10 +120,10 @@ export const site: SiteContent = {
           href: 'https://sumicitsolutions.com/wp-content/uploads/2026/09/Sumic-IT-Solutions-Ltd-Company-Profile-2026-Vol-8.pdf',
           external: true,
         },
-        { label: 'Meet The Founder', href: '/cirus-sumika' },
+        { label: 'Meet The Founder', href: '/cirus-sumika/' },
       ],
     },
-    { label: 'What We Do', href: '/services', sectionId: 'services' },
+    { label: 'What We Do', href: '/services/' },
     {
       label: 'Checklist Forms',
       href: '#',
@@ -141,15 +140,15 @@ export const site: SiteContent = {
         },
       ],
     },
-    { label: 'Partnerships', href: '/sumic-partnerships' },
-    { label: 'Careers', href: '/careers' },
+    { label: 'Partnerships', href: '/sumic-partnerships/' },
+    { label: 'Careers', href: '/careers/' },
   ],
   footer: {
     quickLinks: [
       { label: 'Home', href: '/' },
-      { label: 'About Us', href: '/about' },
-      { label: 'Contact Us', href: '/contact' },
-      { label: 'Governance', href: '/team' },
+      { label: 'About Us', href: '/about/' },
+      { label: 'Contact Us', href: '/contact/' },
+      { label: 'Governance', href: '/team/' },
       {
         label: 'Sumic Brand Kit',
         href: 'https://drive.google.com/drive/folders/1FOC2S_tCI3QX9mhSe5Uu4f8sSVdGu3ku?usp=sharing',
@@ -162,9 +161,9 @@ export const site: SiteContent = {
       },
     ],
     policies: [
-      { label: 'Privacy Policy', href: '/privacy-policy' },
-      { label: 'Cookies Policy', href: '/cookies-policy' },
-      { label: 'Terms of Use Policy', href: '/terms-of-use' },
+      { label: 'Privacy Policy', href: '/privacy-policy/' },
+      { label: 'Cookies Policy', href: '/cookies-policy/' },
+      { label: 'Terms of Use Policy', href: '/terms-of-use/' },
     ],
     copyright: (year) => `Copyright © ${year} Sumic IT Solutions Ltd. All Rights Reserved`,
   },

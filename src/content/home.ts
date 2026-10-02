@@ -6,18 +6,6 @@ import { site } from '@/content/site'
  * Wording is tightened from the live site; every claim is taken from it.
  */
 
-export type HomeSectionId = 'hero' | 'about' | 'services' | 'products' | 'proof' | 'cta'
-
-/** Section order on the home page; also used for active-link tracking. */
-export const homeSectionIds: readonly HomeSectionId[] = [
-  'hero',
-  'about',
-  'services',
-  'products',
-  'proof',
-  'cta',
-]
-
 export interface HomeHero {
   headline: string
   lead: string

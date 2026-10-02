@@ -1,7 +1,9 @@
 import { useRef, type MouseEvent } from 'react'
 import { useReducedMotion } from 'motion/react'
+import { useLocation } from 'react-router'
 import { ArrowUpRightIcon, MenuIcon } from 'lucide-react'
 
+import { AppLink } from '@/components/layout/AppLink'
 import { Logo } from '@/components/layout/Logo'
 import {
   Accordion,
@@ -20,13 +22,12 @@ import {
 } from '@/components/ui/sheet'
 import type { NavLink } from '@/content/site'
 import { ui } from '@/content/ui'
-import { dropdownItems, externalProps, navHref } from '@/lib/nav'
+import { dropdownItems, externalProps, isActiveLink, isInternalRoute, navHref } from '@/lib/nav'
 import { cn } from '@/lib/utils'
 
 interface MobileNavProps {
   links: readonly NavLink[]
   cta: NavLink
-  activeSectionId: string | null
   open: boolean
   onOpenChange: (open: boolean) => void
   /** Trigger sits on a dark surface. */
@@ -36,15 +37,9 @@ interface MobileNavProps {
 const linkClass =
   'flex min-h-11 items-center justify-between gap-2 rounded-lg px-3 text-base font-medium text-brand-heading transition-colors hover:bg-muted'
 
-export function MobileNav({
-  links,
-  cta,
-  activeSectionId,
-  open,
-  onOpenChange,
-  dark,
-}: MobileNavProps) {
+export function MobileNav({ links, cta, open, onOpenChange, dark }: MobileNavProps) {
   const reduceMotion = useReducedMotion()
+  const { pathname } = useLocation()
   // Section to scroll to once the sheet has closed and released its scroll lock.
   const pendingSection = useRef<string | null>(null)
 
@@ -70,17 +65,20 @@ export function MobileNav({
   }
 
   function renderLink(link: NavLink, nested = false) {
-    const active = !!link.sectionId && link.sectionId === activeSectionId
+    // Highlight the exact current page (parents with children are accordion triggers).
+    const active = isInternalRoute(link.href) && !nested && isActiveLink(link, pathname)
+    const current =
+      isInternalRoute(link.href) && isActiveLink({ ...link, children: undefined }, pathname)
     return (
-      <a
+      <AppLink
         href={navHref(link)}
-        aria-current={active ? 'location' : undefined}
+        aria-current={current ? 'page' : undefined}
         onClick={(event) => handleLinkClick(event, link)}
         {...externalProps(link)}
         className={cn(
           linkClass,
           nested && 'text-[0.9375rem] font-normal text-brand-text',
-          active && 'bg-brand-surface-muted font-semibold text-brand-primary',
+          (active || current) && 'bg-brand-surface-muted font-semibold text-brand-primary',
         )}
       >
         {link.label}
@@ -90,7 +88,7 @@ export function MobileNav({
             <span className="sr-only">{ui.nav.opensInNewTab}</span>
           </>
         )}
-      </a>
+      </AppLink>
     )
   }
 
@@ -153,9 +151,9 @@ export function MobileNav({
 
         <SheetFooter className="border-t">
           <Button asChild variant="accent" size="lg" className="h-11 text-base">
-            <a href={navHref(cta)} onClick={(event) => handleLinkClick(event, cta)}>
+            <AppLink href={navHref(cta)} onClick={(event) => handleLinkClick(event, cta)}>
               {cta.label}
-            </a>
+            </AppLink>
           </Button>
         </SheetFooter>
       </SheetContent>

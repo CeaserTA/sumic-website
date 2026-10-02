@@ -2,6 +2,7 @@ import { useId, type ReactNode } from 'react'
 import { ArrowUpRightIcon, MailIcon, MapPinIcon, PhoneIcon, type LucideIcon } from 'lucide-react'
 
 import { SocialIcon } from '@/components/icons/SocialIcon'
+import { AppLink } from '@/components/layout/AppLink'
 import { Container } from '@/components/layout/Container'
 import { Logo } from '@/components/layout/Logo'
 import type { Service } from '@/content/services'
@@ -13,14 +14,14 @@ import { cn } from '@/lib/utils'
 interface FooterProps {
   site: SiteContent
   services: readonly Service[]
-  /** Anchor the services list links to. */
+  /** Where the services list links to. */
   servicesHref?: string
 }
 
 const linkClass =
   'rounded-sm text-brand-primary-foreground/75 transition-colors hover:text-brand-accent'
 
-export function Footer({ site, services, servicesHref = '#services' }: FooterProps) {
+export function Footer({ site, services, servicesHref = '/services/' }: FooterProps) {
   const year = new Date().getFullYear()
   const quickLinksId = useId()
   const servicesId = useId()
@@ -68,10 +69,10 @@ export function Footer({ site, services, servicesHref = '#services' }: FooterPro
           <FooterColumn id={quickLinksId} title={ui.footer.quickLinks} className="lg:col-span-2">
             {site.footer.quickLinks.map((link) => (
               <li key={link.label}>
-                <a href={navHref(link)} {...externalProps(link)} className={linkClass}>
+                <AppLink href={navHref(link)} {...externalProps(link)} className={linkClass}>
                   {link.label}
                   {link.external && <ExternalMark />}
-                </a>
+                </AppLink>
               </li>
             ))}
           </FooterColumn>
@@ -79,9 +80,9 @@ export function Footer({ site, services, servicesHref = '#services' }: FooterPro
           <FooterColumn id={servicesId} title={ui.footer.services} className="lg:col-span-3">
             {services.map((service) => (
               <li key={service.title}>
-                <a href={servicesHref} className={linkClass}>
+                <AppLink href={servicesHref} className={linkClass}>
                   {service.shortTitle ?? service.title}
-                </a>
+                </AppLink>
               </li>
             ))}
           </FooterColumn>
@@ -125,9 +126,9 @@ export function Footer({ site, services, servicesHref = '#services' }: FooterPro
           <ul aria-labelledby={legalId} className="flex flex-wrap gap-x-6 gap-y-2">
             {site.footer.policies.map((link) => (
               <li key={link.label}>
-                <a href={navHref(link)} className={linkClass}>
+                <AppLink href={navHref(link)} className={linkClass}>
                   {link.label}
-                </a>
+                </AppLink>
               </li>
             ))}
           </ul>
