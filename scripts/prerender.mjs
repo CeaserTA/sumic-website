@@ -13,7 +13,7 @@ const root = fileURLToPath(new URL('..', import.meta.url))
 const dist = `${root}dist`
 const ssrDir = `${root}dist-ssr`
 
-const { render, headFor, prerenderPaths, NOT_FOUND_PATH } = await import(
+const { render, headFor, prerenderPaths, NOT_FOUND_PATH, redirects, SITE_URL } = await import(
   pathToFileURL(`${ssrDir}/entry-server.js`).href
 )
 const template = await readFile(`${dist}/index.html`, 'utf8')
@@ -111,6 +111,29 @@ for (const path of prerenderPaths) {
   await writeFile(file, html)
   written.push(file.slice(dist.length))
   if (!isNotFound) sitemapUrls.push(head.canonical)
+}
+
+// Static redirect pages for moved URLs (the host should also send real 301s; see pages.ts).
+for (const { from, to } of redirects) {
+  const target = escape(to)
+  const canonical = escape(SITE_URL + to.split('#')[0])
+  const html = `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Redirecting…</title>
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href="${canonical}" />
+    <meta http-equiv="refresh" content="0; url=${target}" />
+  </head>
+  <body>
+    <p>This page has moved: <a href="${target}">${target}</a></p>
+  </body>
+</html>
+`
+  await mkdir(`${dist}${from}`, { recursive: true })
+  await writeFile(`${dist}${from}index.html`, html)
+  written.push(`${from}index.html (redirect)`)
 }
 
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>

@@ -7,6 +7,9 @@ import { App } from '@/App'
 import { pages } from '@/content/pages'
 import { metaForPath, type RouteHead } from '@/routes/meta'
 
+export { redirects } from '@/content/pages'
+export { SITE_URL } from '@/routes/meta'
+
 /** Path used to prerender the 404 page (any unmatched path renders NotFoundPage). */
 export const NOT_FOUND_PATH = '/__not-found__/'
 

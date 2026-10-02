@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { m, useMotionValueEvent, useScroll } from 'motion/react'
 import { ArrowUpRightIcon } from 'lucide-react'
 import { useLocation } from 'react-router'
 
@@ -19,6 +18,7 @@ import {
 } from '@/components/ui/navigation-menu'
 import type { NavLink } from '@/content/site'
 import { ui } from '@/content/ui'
+import { useScrolledPast } from '@/hooks/useScrolledPast'
 import { dropdownItems, externalProps, isActiveLink, isInternalRoute, navHref } from '@/lib/nav'
 import { cn } from '@/lib/utils'
 
@@ -33,12 +33,9 @@ const SOLID_AFTER = 8
 
 export function Navbar({ links, cta, overlayTone = 'light' }: NavbarProps) {
   const { pathname } = useLocation()
-  const { scrollY } = useScroll()
-  const [solid, setSolid] = useState(false)
-  const [mobileOpen, setMobileOpen] = useState(false)
-
   // The bar stays fixed and visible; it only turns solid once the page scrolls.
-  useMotionValueEvent(scrollY, 'change', (y) => setSolid(y > SOLID_AFTER))
+  const solid = useScrolledPast(SOLID_AFTER)
+  const [mobileOpen, setMobileOpen] = useState(false)
 
   const dark = overlayTone === 'dark' && !solid
 
@@ -115,11 +112,10 @@ function DesktopNavItem({ link, active, current, dark }: DesktopNavItemProps) {
     active && 'font-semibold',
   )
   const indicator = active && (
-    <m.span
-      layoutId="nav-active-indicator"
+    <span
       aria-hidden="true"
       className={cn(
-        'absolute inset-x-2.5 -bottom-0.5 h-0.5 rounded-full',
+        'absolute inset-x-2.5 -bottom-0.5 h-0.5 animate-in rounded-full duration-300 fade-in',
         dark ? 'bg-brand-accent' : 'bg-brand-primary',
       )}
     />

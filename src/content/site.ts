@@ -98,7 +98,8 @@ export const site: SiteContent = {
   contact: {
     address: 'New Port Bell Road, P.O.BOX 172928, Kampala GPO',
     mapUrl: 'https://goo.gl/maps/fvbsxE6NsJfnmGfz8',
-    email: 'info@sumicitsolutions.com',
+    // Company email confirmed by Sumic (2026-10-02); visible text and mailto always match.
+    email: 'it@sumiconline.com',
     phone: { display: '+256 200 930 793', href: 'tel:+256200930793' },
     hours: 'TODO: business hours not listed on the live site',
   },

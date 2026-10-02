@@ -25,27 +25,32 @@ Run `typecheck`, `lint` and `build` before calling any task done.
 src/
   components/ui/        shadcn primitives (CLI-managed; don't hand-edit unless needed)
   components/effects/   React Bits components (added as source, see below)
-  components/layout/    SiteLayout, Navbar, MobileNav, Footer, Container, Section, Logo, AppLink,
-                        BackToTop, ScrollManager, RouteMeta
-  components/blocks/    shared page blocks: PageHero, CtaBand, FeatureList, Prose
+  components/layout/    SiteLayout, Navbar, MobileNav (+ lazy MobileNavSheet), Footer, Container, Section,
+                        Logo, AppLink, BackToTop, ScrollManager, RouteMeta
+  components/blocks/    shared page blocks: PageHero, CtaBand, FeatureList, Prose, LegalDocument,
+                        TableOfContents, PeopleGrid, OrgTree
   components/icons/     brand icons lucide doesn't ship (SocialIcon)
-  components/motion/    small Motion helpers (Reveal)
+  components/motion/    MotionScope (Motion providers) and Reveal
   sections/home/        one file per home page section
   content/              ALL copy and data as typed TS objects
                           site.ts (company, nav, contact), services.ts, partners.ts,
                           home.ts (all home section copy), pages.ts (every route: path, title, description,
-                          breadcrumb, hero copy), testimonials.ts, ui.ts (interface labels, a11y names)
+                          breadcrumb, hero copy) + redirects, company.ts (Sumic meaning, founder, governance + team),
+                          legal/ (privacy, cookies, terms as typed blocks), testimonials.ts,
+                          ui.ts (interface labels, a11y names)
   pages/                one component per route (HomePage, PlannedPage, NotFoundPage, ...)
   routes/               AppRoutes (route table), meta.ts (head tags per path), pageModules.ts
                         (code-split page modules + preloadRoute), lazyWithPreload
   hooks/  lib/
   entry-server.tsx      build-time prerender entry (see "Rendering and performance")
-scripts/prerender.mjs   post-build: prerenders every route to dist/<path>/index.html (+ 404.html, sitemap.xml)
+scripts/prerender.mjs   post-build: prerenders every route to dist/<path>/index.html (+ 404.html, redirect
+                        stubs, sitemap.xml)
 docs/redesign-plan.md   site audit, sitemap, redirects, forms and build order for the remaining pages
 public/brand/           logos and brand imagery (pulled from the live site; brand-kit files will replace them)
 public/brand/partners/  partner logos
 public/brand/products/  real screenshots of Sumic's own products (desktop + phone)
-brand-originals/        unmodified source files for everything in public/brand (not served)
+public/images/          page photography and diagrams as WebP (team/, governance/)
+brand-originals/        unmodified source files for everything in public/brand and public/images (not served)
 ```
 
 Import from `src` using the `@/` alias (`@/components/ui/button`).
@@ -66,6 +71,11 @@ Import from `src` using the `@/` alias (`@/components/ui/button`).
 - Interface labels and accessible names ("Open menu", "Skip to content") live in `src/content/ui.ts`.
 - Render partners from `confirmedPartners` (it excludes entries whose name is still `TODO:`), never from `partners` directly.
 - Content comes from sumicitsolutions.com. **Never invent clients, testimonials, stats or awards.** If something is missing, use a clearly marked `TODO:` placeholder.
+- Company email is **it@sumiconline.com** everywhere (`site.contact.email`); visible text and `mailto:` must match.
+- Stats are shown exactly as on the live site (`homeProof.stats` in `home.ts`), with no added explanations.
+- **Legal text is verbatim.** `src/content/legal/*.ts` hold the live privacy, cookies and terms text as typed blocks (`types.ts`): h2s carry slug ids for the table of contents; the document title lives in the hero and "Last updated" in `lastUpdated`. Only frontend presentation may change, never wording. Each legal route loads only its own document module (`legalPage()` in `routes/pageModules.ts`).
+- Rewritten company copy (company.ts) keeps the live original in a JSDoc comment above it, so changes stay reviewable.
+- Team photos: one square crop per person (640w/320w WebP, `teamPhoto()` in company.ts); alt text is "Name, Role" (PeopleGrid builds it).
 - **Sample testimonials never ship.** Fictional testimonials for layout work must have `isSample: true` and be defined inside the `import.meta.env.DEV` branch in `src/content/testimonials.ts`. Render only `visibleTestimonials`, which excludes samples in production. Production builds must contain no sample text, and the testimonials block stays hidden until real, consented testimonials are added to `realTestimonials`. In dev, samples show a "Sample content" badge.
 
 ### Styling
@@ -95,7 +105,8 @@ Import from `src` using the `@/` alias (`@/components/ui/button`).
 
 ### Animation
 
-- Use Motion for scroll reveals and micro-interactions, via the lightweight `m.*` components (`import { m } from 'motion/react'`). App.tsx wraps everything in `<LazyMotion strict>`, which loads the animation engine as a separate chunk; a full `motion.*` component throws in strict mode.
+- Use Motion for scroll reveals and micro-interactions, via the lightweight `m.*` components (`import { m } from 'motion/react'`). There is no app-level provider: wrap animated components in `<MotionScope>` (`LazyMotion strict` + `MotionConfig reducedMotion="user"`), as Reveal and ProcessTimeline do, so pages without animation never load Motion. A full `motion.*` component throws in strict mode.
+- Keep Motion off the critical path: no Motion in the navbar, hero or layout. Scroll-position state uses `useScrolledPast(px)` (passive listener), not Motion's `useScroll`; simple fades use CSS transitions.
 - Above-the-fold entrance animations (hero headline, hero visual) use CSS keyframes (`animate-blur-in`, `animate-rise-in` in `index.css`) so they start on first paint of the prerendered HTML.
 - Every animation respects `prefers-reduced-motion` (`MotionConfig reducedMotion="user"` for Motion, the global CSS safety net for CSS animations).
 - Continuous motion longer than 5 seconds (hero background, logo marquee) needs a visible pause control (WCAG 2.2.2).
@@ -109,11 +120,12 @@ Import from `src` using the `@/` alias (`@/components/ui/button`).
 
 ### Rendering and performance
 
-- **Prerendered HTML.** `npm run build` renders the app to static HTML (`src/entry-server.tsx`, `scripts/prerender.mjs`); the client hydrates it (`hydrateRoot` in `main.tsx`). Dev renders client-side only.
+- **Prerendered HTML.** `npm run build` renders the app to static HTML (`src/entry-server.tsx`, `scripts/prerender.mjs`); the client hydrates it (`hydrateRoot` in `main.tsx`). Dev renders client-side only. `entry-server.tsx` exports helpers alongside `render`, so `eslint.config.js` turns off `react-refresh/only-export-components` for that file only.
 - **Hydration must match.** The first client render must equal the server render. Never read `window`, `document`, `navigator` or `matchMedia` during render. Use `useMediaQuery` / `useReducedMotionPreference` / `useHeavyEffects` (they return the server value during hydration, then update), or read in effects and handlers.
 - **Below-the-fold sections are lazy chunks** (`React.lazy` + `Suspense` in `HomePage.tsx`). The prerender waits for them, so the HTML is complete.
 - **Keep pages static.** State that changes after load lives in small leaf components (the navbar, BackToTop), never in page components. Updates pushed into sections that are still hydrating make React throw away their prerendered DOM and re-render them.
 - **Code-split pages must be preloadable.** Wrap page modules with `lazyWithPreload` in `src/routes/pageModules.ts` and extend `preloadRoute()`. `main.tsx` preloads the current route's chunk before `hydrateRoot`, so the page hydrates in place.
+- **Keep the startup bundle lean.** Anything not needed for first paint is a lazy chunk: below-fold sections, the mobile menu sheet (`MobileNavSheet`, preloaded on hover/focus/touch of the menu button), WebGL effects, page modules.
 - **Below-the-fold blocks use `defer-render`** (`content-visibility: auto`) so the browser skips their layout until they are near view.
 - **Measuring:** Lighthouse's default simulated mobile throttling is unreliable against localhost (the JS arrives instantly and gets counted as render-blocking). Measure mobile with `--throttling-method=devtools`, or with PageSpeed Insights on the deployed site.
 
@@ -126,6 +138,8 @@ Import from `src` using the `@/` alias (`@/components/ui/button`).
 - **Active nav item** comes from the current route (`isActiveLink` in `src/lib/nav.ts`); a dropdown parent is active when one of its children is. The current page link gets `aria-current="page"`.
 - **Every page** renders inside `SiteLayout` (navbar, `<main id="main">`, footer, BackToTop). Inner pages start with `<PageHero>` (navy, breadcrumb, the page's single h1) and usually end with `<CtaBand>`.
 - **Route changes:** `ScrollManager` scrolls to the top (or the `#hash`) and moves focus to `#main`; `RouteMeta` updates the title, description and canonical. The prerender writes the same head tags into each page's HTML.
+- **Redirects** for retired URLs live in `redirects` in `src/content/pages.ts` (e.g. `/what-are-cookies/` → `/cookies-policy/#what-are-cookies`). The app handles them with `<Navigate>`; the prerender writes a stub HTML page (meta refresh, canonical, noindex) for static hosts. Prefer real 301s at the host when it's set up.
+- **Long documents** use `<TableOfContents>` (collapsible on mobile, sticky from lg) with a ~70-character measure (`max-w-[40rem]` at text-lg; `ch` overshoots in Satoshi). Long URLs in text get `wrap-anywhere`, and grid columns holding prose use `minmax(0,1fr)` so they can't overflow at 360px.
 - **404:** unknown paths render `NotFoundPage`; the build writes `dist/404.html` (noindex). The host must serve `404.html` with a 404 status for unknown URLs, and serve `/<path>/index.html` for directory URLs (with a trailing-slash redirect).
 
 ### Product screenshots

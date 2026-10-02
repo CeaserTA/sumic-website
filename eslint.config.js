@@ -28,6 +28,13 @@ export default defineConfig([
     },
   },
   {
+    // Build-time prerender entry: exports data and functions, never hot-reloaded.
+    files: ['src/entry-server.tsx'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
+  {
     // shadcn primitives export variant helpers next to components.
     files: ['src/components/ui/**/*.tsx'],
     rules: {

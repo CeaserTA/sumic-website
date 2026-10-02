@@ -206,19 +206,12 @@ export interface HomeProof {
 export const homeProof: HomeProof = {
   eyebrow: 'Why Sumic',
   title: 'A track record built in Kampala since 2019.',
-  // Numbers from the live site only:
-  // - 2019: founding year (home + /about/)
-  // - 1K+ satisfied clients: /about/ "Statistics" (confirmed by Sumic)
-  // - 200+ interns trained: /about/ "trained over 200 interns"
-  // - 3 continents: clients and partners "across Africa, Asia and Europe" (home)
-  // Not rendered:
-  // - TODO: confirm "50+ Projects Completed" (/about/). It reads oddly beside 1K+ clients.
-  // - "5% Young Women" and "1M+ Sumic Visitors" (/about/) have no context to present them.
+  // Exactly as on the live site (/about/ "Statistics"), per Sumic: shown as-is, no explanations.
   stats: [
-    { value: 2019, from: 2000, label: 'Founded in Kampala' },
-    { value: 1, suffix: 'K+', label: 'Satisfied clients' },
-    { value: 200, suffix: '+', label: 'Interns trained' },
-    { value: 3, label: 'Continents with clients and partners' },
+    { value: 1, suffix: 'K+', label: 'Satisfied Clients' },
+    { value: 50, suffix: '+', label: 'Projects Completed' },
+    { value: 5, suffix: '%', label: 'Young Women' },
+    { value: 1, suffix: 'M+', label: 'Sumic Visitors' },
   ],
   // Source: /about/ "Our Development Lifecycle" (six steps), tightened.
   process: {

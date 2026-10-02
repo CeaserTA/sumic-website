@@ -1,5 +1,4 @@
 import { lazy, Suspense, useState } from 'react'
-import { m } from 'motion/react'
 
 import { cssVarToRgb } from '@/lib/color'
 
@@ -29,14 +28,12 @@ export function HeroBackground({ enabled, paused }: HeroBackgroundProps) {
       <div className="absolute inset-0 bg-hero-glow" />
       {enabled && (
         <Suspense fallback={null}>
-          <m.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.55 }}
-            transition={{ duration: 1.6, ease: 'easeOut', delay: 0.3 }}
-            className="absolute inset-x-0 top-[18%] bottom-0 [mask-image:linear-gradient(to_right,transparent_35%,black_75%)]"
-          >
-            <Threads color={color} amplitude={1.2} distance={0.25} paused={paused} />
-          </m.div>
+          {/* Fades in with CSS (keeps Motion out of the startup bundle); settles at 55% opacity. */}
+          <div className="absolute inset-x-0 top-[18%] bottom-0 [mask-image:linear-gradient(to_right,transparent_35%,black_75%)] opacity-55">
+            <div className="size-full animate-in delay-300 duration-[1600ms] ease-out fill-mode-both fade-in">
+              <Threads color={color} amplitude={1.2} distance={0.25} paused={paused} />
+            </div>
+          </div>
         </Suspense>
       )}
     </div>

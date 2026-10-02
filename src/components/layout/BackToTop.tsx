@@ -1,10 +1,9 @@
-import { useState } from 'react'
-import { useMotionValueEvent, useScroll } from 'motion/react'
 import { ArrowUpIcon } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { ui } from '@/content/ui'
 import { useReducedMotionPreference } from '@/hooks/useHeavyEffects'
+import { useScrolledPast } from '@/hooks/useScrolledPast'
 import { cn } from '@/lib/utils'
 
 const SHOW_AFTER = 600
@@ -16,11 +15,8 @@ const SHOW_AFTER = 600
  * `invisible`, which also removes it from the tab order.
  */
 export function BackToTop() {
-  const { scrollY } = useScroll()
-  const [visible, setVisible] = useState(false)
+  const visible = useScrolledPast(SHOW_AFTER)
   const reduceMotion = useReducedMotionPreference()
-
-  useMotionValueEvent(scrollY, 'change', (y) => setVisible(y > SHOW_AFTER))
 
   function handleClick() {
     window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' })

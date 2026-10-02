@@ -20,6 +20,9 @@ export const ui = {
     play: 'Play logo animation',
   },
   backToTop: 'Back to top',
+  toc: {
+    title: 'On this page',
+  },
   breadcrumb: {
     label: 'Breadcrumb',
   },

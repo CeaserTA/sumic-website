@@ -65,7 +65,7 @@ export const pages: readonly PageMeta[] = [
     description:
       'Governance structure and management team of Sumic IT Solutions Ltd, committed to the highest standards of governance, integrity, ethics and professionalism.',
     breadcrumb: 'Governance',
-    status: 'planned',
+    status: 'built',
     hero: {
       title: 'Governance',
       intro:
@@ -79,7 +79,7 @@ export const pages: readonly PageMeta[] = [
     description:
       'Where the name Sumic comes from and what it stands for: speed, innovation and resilience.',
     breadcrumb: 'Sumic meaning',
-    status: 'planned',
+    status: 'built',
     hero: {
       title: 'Sumic meaning',
       intro: 'Unlocking the meaning of Sumic: speed, innovation and resilience.',
@@ -92,7 +92,7 @@ export const pages: readonly PageMeta[] = [
     description:
       'Cirus Sumika, Founder & CEO of Sumic IT Solutions Ltd: techpreneur, mentor and writer.',
     breadcrumb: 'Meet the founder',
-    status: 'planned',
+    status: 'built',
     hero: {
       title: 'Meet the founder',
       intro: 'Cirus Sumika, Founder & CEO of Sumic IT Solutions Ltd.',
@@ -144,7 +144,7 @@ export const pages: readonly PageMeta[] = [
     path: '/contact/',
     title: 'Contact us',
     description:
-      'Request a free consultation or reach Sumic IT Solutions Ltd on New Port Bell Road, Kampala: info@sumicitsolutions.com, +256 200 930 793.',
+      'Request a free consultation or reach Sumic IT Solutions Ltd on New Port Bell Road, Kampala: it@sumiconline.com, +256 200 930 793.',
     breadcrumb: 'Contact',
     status: 'planned',
     hero: {
@@ -158,7 +158,7 @@ export const pages: readonly PageMeta[] = [
     title: 'Privacy policy',
     description: 'How Sumic IT Solutions Ltd collects, uses and protects your personal data.',
     breadcrumb: 'Privacy policy',
-    status: 'planned',
+    status: 'built',
     // TODO: the live policy was last updated 5 September 2023; needs review before launch.
     hero: { title: 'Privacy policy', intro: 'Last updated: September 05, 2023' },
   },
@@ -168,7 +168,7 @@ export const pages: readonly PageMeta[] = [
     title: 'Cookies policy',
     description: 'What cookies are and how the Sumic IT Solutions website uses them.',
     breadcrumb: 'Cookies policy',
-    status: 'planned',
+    status: 'built',
     // TODO: review against what the new site actually stores (no analytics or ad cookies yet).
     hero: { title: 'Cookies policy', intro: 'Last updated: September 05, 2023' },
   },
@@ -178,9 +178,18 @@ export const pages: readonly PageMeta[] = [
     title: 'Terms of use',
     description: 'The terms and conditions for using the Sumic IT Solutions website.',
     breadcrumb: 'Terms of use',
-    status: 'planned',
+    status: 'built',
     hero: { title: 'Terms of use', intro: 'Last updated: September 05, 2023' },
   },
+]
+
+/**
+ * Old URLs that now live elsewhere. The client router redirects them, and the prerender writes a
+ * small static redirect page (meta refresh + canonical) for direct visits. Mirror these as 301s
+ * in the host config when hosting is set up.
+ */
+export const redirects: readonly { from: string; to: string }[] = [
+  { from: '/what-are-cookies/', to: '/cookies-policy/#what-are-cookies' },
 ]
 
 export const notFoundPage = {
