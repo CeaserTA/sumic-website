@@ -30,34 +30,19 @@ interface NavbarProps {
 }
 
 const SOLID_AFTER = 8
-const HIDE_AFTER = 160
-const JITTER = 4
 
 export function Navbar({ links, cta, activeSectionId = null, overlayTone = 'light' }: NavbarProps) {
   const { scrollY } = useScroll()
   const [solid, setSolid] = useState(false)
-  const [hidden, setHidden] = useState(false)
-  const [menuValue, setMenuValue] = useState('')
   const [mobileOpen, setMobileOpen] = useState(false)
 
-  useMotionValueEvent(scrollY, 'change', (y) => {
-    const previous = scrollY.getPrevious() ?? 0
-    setSolid(y > SOLID_AFTER)
-    if (Math.abs(y - previous) < JITTER) return
-    // Keep the bar visible while a menu is open.
-    const menuOpen = menuValue !== '' || mobileOpen
-    setHidden(!menuOpen && y > previous && y > HIDE_AFTER)
-  })
+  // The bar stays fixed and visible; it only turns solid once the page scrolls.
+  useMotionValueEvent(scrollY, 'change', (y) => setSolid(y > SOLID_AFTER))
 
   const dark = overlayTone === 'dark' && !solid
 
   return (
-    <m.header
-      initial={false}
-      animate={{ y: hidden ? '-100%' : '0%' }}
-      transition={{ duration: 0.25, ease: 'easeOut' }}
-      // Keyboard users tabbing back into the header always get it back.
-      onFocusCapture={() => setHidden(false)}
+    <header
       className={cn(
         'fixed inset-x-0 top-0 z-40 border-b transition-[background-color,border-color,box-shadow] duration-300',
         solid
@@ -76,13 +61,7 @@ export function Navbar({ links, cta, activeSectionId = null, overlayTone = 'ligh
       <Container className="flex h-16 items-center justify-between gap-6 lg:h-20">
         <Logo variant={dark ? 'inverse' : 'default'} priority className="h-11 lg:h-14" />
 
-        <NavigationMenu
-          viewport={false}
-          value={menuValue}
-          onValueChange={setMenuValue}
-          aria-label={ui.nav.label}
-          className="hidden lg:flex"
-        >
+        <NavigationMenu viewport={false} aria-label={ui.nav.label} className="hidden lg:flex">
           <NavigationMenuList className="gap-1">
             {links.map((link) => (
               <DesktopNavItem
@@ -109,7 +88,7 @@ export function Navbar({ links, cta, activeSectionId = null, overlayTone = 'ligh
           />
         </div>
       </Container>
-    </m.header>
+    </header>
   )
 }
 

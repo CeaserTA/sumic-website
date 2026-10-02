@@ -16,7 +16,7 @@ interface AboutSectionProps {
 export function AboutSection({ content, products }: AboutSectionProps) {
   return (
     <Section id="about" eyebrow={content.eyebrow} title={content.title}>
-      <div className="mt-12 grid gap-12 lg:mt-16 lg:grid-cols-12 lg:gap-16">
+      <div className="mt-10 grid gap-12 lg:mt-12 lg:grid-cols-12 lg:gap-16">
         <div className="flex flex-col gap-6 lg:col-span-6">
           {content.paragraphs.map((paragraph, index) => (
             <Reveal key={paragraph} index={index}>
@@ -55,15 +55,18 @@ export function AboutSection({ content, products }: AboutSectionProps) {
 
 function StatementCard({ statement, icon: Icon }: { statement: Statement; icon: LucideIcon }) {
   return (
-    <Card className="h-full">
-      <CardHeader className="gap-3">
-        <span className="flex size-10 items-center justify-center rounded-lg bg-brand-accent text-brand-accent-foreground">
-          <Icon aria-hidden="true" className="size-5" />
+    // Subtle dark-green tint and border give the two statements more weight than plain cards.
+    <Card className="h-full bg-brand-accent-ink/5 ring-brand-accent-ink/25">
+      <CardHeader className="gap-4">
+        <span className="flex size-12 items-center justify-center rounded-xl bg-brand-accent text-brand-accent-foreground">
+          <Icon aria-hidden="true" className="size-6" />
         </span>
         <CardTitle>
-          <h3 className="text-lg font-semibold">{statement.title}</h3>
+          <h3 className="text-xl">{statement.title}</h3>
         </CardTitle>
-        <CardDescription className="text-base text-brand-text">{statement.text}</CardDescription>
+        <CardDescription className="text-lg text-pretty text-brand-heading">
+          {statement.text}
+        </CardDescription>
       </CardHeader>
     </Card>
   )

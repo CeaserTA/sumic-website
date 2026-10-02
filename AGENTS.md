@@ -59,6 +59,7 @@ Import from `src` using the `@/` alias (`@/components/ui/button`).
 - Interface labels and accessible names ("Open menu", "Skip to content") live in `src/content/ui.ts`.
 - Render partners from `confirmedPartners` (it excludes entries whose name is still `TODO:`), never from `partners` directly.
 - Content comes from sumicitsolutions.com. **Never invent clients, testimonials, stats or awards.** If something is missing, use a clearly marked `TODO:` placeholder.
+- **Sample testimonials never ship.** Fictional testimonials for layout work must have `isSample: true` and be defined inside the `import.meta.env.DEV` branch in `src/content/testimonials.ts`. Render only `visibleTestimonials`, which excludes samples in production. Production builds must contain no sample text, and the testimonials block stays hidden until real, consented testimonials are added to `realTestimonials`. In dev, samples show a "Sample content" badge.
 
 ### Styling
 
@@ -69,7 +70,8 @@ Import from `src` using the `@/` alias (`@/components/ui/button`).
   - For green text or icons on light surfaces, use `brand-accent-ink`.
   - Focus rings use `ring` (navy). On dark surfaces, set `[--ring:var(--brand-accent)]` on the container so rings turn green.
 - The primary CTA uses `<Button variant="accent">` (green with navy text), a project addition to the shadcn button.
-- Fonts: `font-heading` / `font-display` (Bricolage Grotesque) for headings and display type; `font-sans` (Atkinson Hyperlegible Next) for everything else.
+- Font: **Satoshi** (Indian Type Foundry, ITF Free Font License) for headings and body. It's self-hosted as one variable woff2 file (weights 300–900) in `src/assets/fonts/satoshi/`, with its licence in `LICENSE-FFL.txt`. The licence forbids redistributing the font files, so don't put them in a public repository or font service. Headings: weight 700, letter-spacing -0.02em, line-height 1.05 (set in the base layer; don't override per heading). Body: weight 400, 500 for emphasis. Hero h1 tops out around 76px.
+- Vertical rhythm: sections use `py-12 sm:py-16 lg:py-22` (the `Section` component); keep custom bands on the same scale.
 - Light mode only for now. Dark mode will override the brand-role and semantic token layers in `src/index.css`; don't hardcode light-only colours in components.
 
 ### Responsive
@@ -108,6 +110,8 @@ Import from `src` using the `@/` alias (`@/components/ui/button`).
 - **Measuring:** Lighthouse's default simulated mobile throttling is unreliable against localhost (the JS arrives instantly and gets counted as render-blocking). Measure mobile with `--throttling-method=devtools`, or with PageSpeed Insights on the deployed site.
 
 ### Navigation
+
+- The navbar is fixed and always visible. It turns solid with a blur after the page scrolls; it never hides on scroll.
 
 - `NavLink.href` is the canonical page URL. `NavLink.sectionId` maps a link to a home page section; `navHref()` in `src/lib/nav.ts` resolves such links to `#<sectionId>` while the home page is the only page.
 - Every home section is a `<Section id=...>`, and its id must be listed in `homeSectionIds` for active-link tracking.

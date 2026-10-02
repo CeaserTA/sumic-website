@@ -71,7 +71,7 @@ export function ProcessTimeline({ title, intro, steps }: ProcessTimelineProps) {
                 {index + 1}
               </span>
               <div className="flex flex-col gap-1.5 pt-1.5 lg:pt-0">
-                <h4 className="text-lg font-semibold">{step.title}</h4>
+                <h4 className="text-lg">{step.title}</h4>
                 <p className="text-pretty">{step.text}</p>
               </div>
             </Reveal>

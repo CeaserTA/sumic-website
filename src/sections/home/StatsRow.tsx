@@ -14,10 +14,11 @@ export function StatsRow({ stats }: { stats: readonly Stat[] }) {
         <Reveal
           key={stat.label}
           index={index}
-          className="flex flex-col-reverse gap-2 border-t-2 border-brand-accent-ink pt-5"
+          // column-reverse packs from the bottom; justify-end packs from the top so numbers align.
+          className="flex flex-col-reverse justify-end gap-2 border-t-2 border-brand-accent-ink pt-5"
         >
           <dt className="text-pretty text-brand-text">{stat.label}</dt>
-          <dd className="font-heading text-5xl leading-none font-bold text-brand-primary font-stretch-condensed sm:text-6xl">
+          <dd className="font-heading text-5xl leading-none font-bold tracking-[-0.02em] text-brand-primary sm:text-6xl">
             <CountUp to={stat.value} from={stat.from} duration={1.6} delay={index * 0.1} />
             {stat.suffix}
           </dd>

@@ -21,7 +21,7 @@ function PartnerLogo({ partner }: { partner: Partner }) {
       width={partner.logo.width}
       height={partner.logo.height}
       decoding="async"
-      className="h-14 w-auto opacity-70 grayscale transition-[filter,opacity] duration-300 hover:opacity-100 hover:grayscale-0"
+      className="h-11 w-auto max-w-44 object-contain opacity-85 grayscale transition-[filter,opacity] duration-300 hover:opacity-100 hover:grayscale-0"
     />
   )
 }

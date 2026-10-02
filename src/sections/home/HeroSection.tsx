@@ -32,24 +32,29 @@ export function HeroSection({ content }: HeroSectionProps) {
       {effectsEnabled && (
         <Button
           variant="outline-inverse"
-          size="icon-lg"
+          size="icon-sm"
           onClick={() => setBackgroundPaused((paused) => !paused)}
           aria-pressed={backgroundPaused}
-          className="absolute right-4 bottom-4 z-10 size-10 rounded-full sm:right-6 sm:bottom-6"
+          // Small, subtle corner control; fully opaque on hover/focus.
+          className="absolute right-3 bottom-3 z-10 size-8 rounded-full border-brand-primary-foreground/25 bg-brand-heading/30 text-brand-primary-foreground/80 opacity-70 backdrop-blur-sm hover:opacity-100 focus-visible:opacity-100 sm:right-5 sm:bottom-5"
         >
-          {backgroundPaused ? <PlayIcon /> : <PauseIcon />}
+          {backgroundPaused ? (
+            <PlayIcon className="size-3.5" />
+          ) : (
+            <PauseIcon className="size-3.5" />
+          )}
           <span className="sr-only">
             {backgroundPaused ? ui.heroBackground.play : ui.heroBackground.pause}
           </span>
         </Button>
       )}
 
-      <Container className="grid items-center gap-16 pt-28 pb-20 sm:pt-32 lg:min-h-[min(100svh,60rem)] lg:grid-cols-12 lg:gap-10 lg:pt-36 lg:pb-28">
+      <Container className="grid items-center gap-16 pt-24 pb-16 sm:pt-28 lg:min-h-[min(100svh,56rem)] lg:grid-cols-12 lg:gap-10 lg:pt-32 lg:pb-22">
         <div className="flex flex-col gap-8 lg:col-span-7">
-          {/* Condensed width axis at display size: the headline is the page's thesis. */}
+          {/* Display size (max ~76px): the headline is the page's thesis. */}
           <h1
             id={titleId}
-            className="text-[clamp(3rem,8.5vw,6.5rem)] leading-[0.92] font-bold tracking-[-0.015em] text-brand-primary-foreground font-stretch-condensed"
+            className="text-[clamp(2.5rem,6.5vw,4.75rem)] text-brand-primary-foreground"
           >
             <span className="sr-only">{content.headline}</span>
             <BlurText text={content.headline} delay={90} />

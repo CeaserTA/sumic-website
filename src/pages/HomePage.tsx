@@ -13,7 +13,7 @@ import {
 import { confirmedPartners } from '@/content/partners'
 import { services } from '@/content/services'
 import { site } from '@/content/site'
-import { testimonials } from '@/content/testimonials'
+import { visibleTestimonials } from '@/content/testimonials'
 import { useActiveSection } from '@/hooks/useActiveSection'
 import { HeroSection } from '@/sections/home/HeroSection'
 
@@ -68,7 +68,7 @@ export function HomePage() {
           <ProofSection
             content={homeProof}
             partners={confirmedPartners}
-            testimonials={testimonials}
+            testimonials={visibleTestimonials}
           />
         </Suspense>
         <Suspense fallback={null}>

@@ -18,9 +18,20 @@ interface ServiceCardProps {
   className?: string
 }
 
-export function ServiceCard({ service, icon, learnMoreLabel, className }: ServiceCardProps) {
-  return (
-    <ServiceCardFrame className={cn('bg-brand-surface ring-brand-line', className)}>
+interface StandardServiceCardProps extends ServiceCardProps {
+  /** Optional decorative visual shown on the right of wide cards (desktop only). */
+  visual?: ReactNode
+}
+
+export function ServiceCard({
+  service,
+  icon,
+  learnMoreLabel,
+  visual,
+  className,
+}: StandardServiceCardProps) {
+  const content = (
+    <>
       <ServiceCardIcon icon={icon} className="bg-brand-accent-ink/10 text-brand-accent-ink" />
       <ServiceCardBody service={service} descriptionClassName="text-brand-text" />
       <ServiceCardLink
@@ -28,6 +39,21 @@ export function ServiceCard({ service, icon, learnMoreLabel, className }: Servic
         label={learnMoreLabel}
         className="text-brand-accent-ink decoration-brand-accent-ink/40"
       />
+    </>
+  )
+
+  return (
+    <ServiceCardFrame className={cn('bg-brand-surface ring-brand-line', className)}>
+      {visual ? (
+        <div className="flex h-full items-center gap-8">
+          <div className="flex h-full min-w-0 flex-1 flex-col gap-5">{content}</div>
+          <div aria-hidden="true" className="hidden shrink-0 lg:block">
+            {visual}
+          </div>
+        </div>
+      ) : (
+        content
+      )}
     </ServiceCardFrame>
   )
 }
@@ -104,7 +130,7 @@ function ServiceCardBody({
 }) {
   return (
     <div className="flex flex-col gap-2">
-      <h3 className={cn('text-xl font-semibold text-pretty sm:text-2xl', titleClassName)}>
+      <h3 className={cn('text-xl text-pretty sm:text-2xl', titleClassName)}>
         {service.shortTitle ?? service.title}
       </h3>
       <p className={cn('max-w-prose text-pretty', descriptionClassName)}>{service.description}</p>

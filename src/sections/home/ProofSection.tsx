@@ -17,7 +17,7 @@ interface ProofSectionProps {
 export function ProofSection({ content, partners, testimonials }: ProofSectionProps) {
   return (
     <Section id="proof" eyebrow={content.eyebrow} title={content.title}>
-      <div className="mt-12 flex flex-col gap-20 lg:mt-16 lg:gap-28">
+      <div className="mt-10 flex flex-col gap-16 lg:mt-12 lg:gap-20">
         <StatsRow stats={content.stats} />
         <ProcessTimeline
           title={content.process.title}

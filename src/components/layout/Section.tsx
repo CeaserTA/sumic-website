@@ -48,7 +48,7 @@ export function Section({
       aria-labelledby={title ? titleId : undefined}
       // Sections sit below the hero, so the browser can skip styling them until near view.
       className={cn(
-        'py-16 defer-render outline-none sm:py-20 lg:py-28',
+        'py-12 defer-render outline-none sm:py-16 lg:py-22',
         toneClasses[tone],
         className,
       )}
@@ -67,7 +67,8 @@ export function Section({
               <Title
                 id={titleId}
                 className={cn(
-                  'text-3xl leading-tight font-bold tracking-tight sm:text-4xl lg:text-5xl',
+                  // Weight, tracking and line-height come from the base heading styles.
+                  'text-3xl sm:text-4xl lg:text-5xl',
                   dark && 'text-brand-primary-foreground',
                 )}
               >

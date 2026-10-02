@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import {
   ArrowUpRightIcon,
   BrainCircuitIcon,
@@ -17,6 +18,7 @@ import type { Service, ServiceId } from '@/content/services'
 import { ui } from '@/content/ui'
 import { externalProps, navHref } from '@/lib/nav'
 import { FeaturedServiceCard, ServiceCard } from '@/sections/home/ServiceCard'
+import { GrowthChartVisual, PhoneAppsVisual } from '@/sections/home/ServiceVisuals'
 
 interface ServicesSectionProps {
   content: HomeServices
@@ -45,22 +47,40 @@ const spans: Partial<Record<ServiceId, string>> = {
   'digital-marketing': 'md:col-span-2',
 }
 
+// Visuals fill the right side of the two wide cards (desktop only).
+const visuals: Partial<Record<ServiceId, ReactNode>> = {
+  'mobile-apps': <PhoneAppsVisual />,
+  'digital-marketing': <GrowthChartVisual />,
+}
+
 export function ServicesSection({ content, services }: ServicesSectionProps) {
   return (
     <Section id="services" eyebrow={content.eyebrow} title={content.title} tone="muted">
-      <ul className="mt-12 grid gap-4 md:grid-cols-2 lg:mt-16 lg:grid-cols-3 lg:gap-5">
+      <ul className="mt-10 grid gap-4 md:grid-cols-2 lg:mt-12 lg:grid-cols-3 lg:gap-5">
         {services.map((service, index) => {
-          const Card = service.id === FEATURED ? FeaturedServiceCard : ServiceCard
           return (
             <Reveal key={service.id} as="li" index={index} className={spans[service.id]}>
-              <Card service={service} icon={icons[service.id]} learnMoreLabel={content.learnMore} />
+              {service.id === FEATURED ? (
+                <FeaturedServiceCard
+                  service={service}
+                  icon={icons[service.id]}
+                  learnMoreLabel={content.learnMore}
+                />
+              ) : (
+                <ServiceCard
+                  service={service}
+                  icon={icons[service.id]}
+                  learnMoreLabel={content.learnMore}
+                  visual={visuals[service.id]}
+                />
+              )}
             </Reveal>
           )
         })}
       </ul>
 
       <Reveal index={2}>
-        <div className="mt-10 flex flex-col gap-5 rounded-2xl border border-dashed border-brand-line bg-brand-surface p-6 sm:p-8 lg:flex-row lg:items-center lg:justify-between">
+        <div className="mt-8 flex flex-col gap-5 rounded-2xl border border-dashed border-brand-line bg-brand-surface p-6 sm:p-8 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex gap-4">
             <ClipboardListIcon
               aria-hidden="true"

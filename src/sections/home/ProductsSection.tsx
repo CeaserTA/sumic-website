@@ -23,7 +23,7 @@ export function ProductsSection({ content }: ProductsSectionProps) {
       tone="primary"
       className="bg-hero-glow"
     >
-      <div className="mt-14 flex flex-col gap-24 lg:mt-20 lg:gap-32">
+      <div className="mt-10 flex flex-col gap-16 lg:mt-14 lg:gap-24">
         {content.items.map((product, index) => (
           <ProductRow
             key={product.id}

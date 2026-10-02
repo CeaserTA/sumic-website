@@ -18,7 +18,7 @@ export function EcosystemPanel({ title, caption, products }: EcosystemPanelProps
     <div className="relative isolate overflow-hidden rounded-3xl bg-brand-primary p-6 text-brand-primary-foreground [--ring:var(--brand-accent)] sm:p-10">
       <div className="flex flex-col gap-8">
         <div className="flex flex-col gap-1">
-          <h3 id={titleId} className="text-2xl font-semibold text-brand-primary-foreground">
+          <h3 id={titleId} className="text-2xl text-brand-primary-foreground">
             {title}
           </h3>
           <p className="text-brand-primary-foreground/75">{caption}</p>

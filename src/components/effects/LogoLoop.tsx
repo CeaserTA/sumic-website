@@ -96,7 +96,9 @@ export function LogoLoop<T>({
     <div
       ref={containerRef}
       className={cn(
-        'relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]',
+        // Fade on both edges; the left padding starts the first logo after the fade, so it
+        // never looks clipped at rest.
+        'relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)] pl-[12%]',
         className,
       )}
     >

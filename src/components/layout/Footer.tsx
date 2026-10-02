@@ -147,7 +147,7 @@ interface FooterColumnProps {
 function FooterColumn({ id, title, className, children }: FooterColumnProps) {
   return (
     <div className={className}>
-      <h2 id={id} className="mb-3 font-sans text-sm font-semibold text-brand-primary-foreground">
+      <h2 id={id} className="mb-3 text-sm text-brand-primary-foreground">
         {title}
       </h2>
       <ul aria-labelledby={id} className="flex flex-col gap-2 text-sm">

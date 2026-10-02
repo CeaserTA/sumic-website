@@ -12,6 +12,9 @@ export const ui = {
     pause: 'Pause background animation',
     play: 'Play background animation',
   },
+  testimonials: {
+    sampleBadge: 'Sample content',
+  },
   marquee: {
     pause: 'Pause logo animation',
     play: 'Play logo animation',

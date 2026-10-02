@@ -1,10 +1,18 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
-@import '@fontsource-variable/bricolage-grotesque/standard.css';
-@import '@fontsource-variable/atkinson-hyperlegible-next/index.css';
 
 @custom-variant dark (&:is(.dark *));
+
+/* Satoshi by Indian Type Foundry (Fontshare), self-hosted under the ITF Free Font License
+   (src/assets/fonts/satoshi/LICENSE-FFL.txt). One variable file covers weights 300–900. */
+@font-face {
+  font-family: 'Satoshi';
+  src: url('./assets/fonts/satoshi/Satoshi-Variable.woff2') format('woff2');
+  font-weight: 300 900;
+  font-style: normal;
+  font-display: swap;
+}
 
 /*
  * Token layers
@@ -83,8 +91,9 @@
 
 @theme inline {
   /* Typography */
-  --font-sans: 'Atkinson Hyperlegible Next Variable', ui-sans-serif, system-ui, sans-serif;
-  --font-heading: 'Bricolage Grotesque Variable', ui-sans-serif, system-ui, sans-serif;
+  /* Satoshi for both headings and body. */
+  --font-sans: 'Satoshi', ui-sans-serif, system-ui, sans-serif;
+  --font-heading: 'Satoshi', ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-heading);
 
   /* Hero entrances run in CSS so they start on first paint of the prerendered HTML,
@@ -198,6 +207,11 @@
   h5,
   h6 {
     @apply font-heading text-balance text-brand-heading;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    /* text-* size utilities read --tw-leading, so every heading size gets 1.05. */
+    --tw-leading: 1.05;
   }
   :focus-visible {
     @apply outline-2 outline-offset-2 outline-ring;
