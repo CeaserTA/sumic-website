@@ -7,4 +7,4 @@ Replace everything here with the official brand-kit files when they are availabl
 `public/brand/`.
 
 Also here: `team/`, `governance/` (Governance page), `services/` (the six live /services/
-illustrations) and `about/` (office photos from /careers/), the sources for `public/images/`.
+illustrations), `about/` (office photos from /careers/) and `partnerships/` (project graphics), the sources for `public/images/`.

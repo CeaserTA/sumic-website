@@ -47,6 +47,15 @@ export const AboutPage = lazyWithPreload(() =>
 export const ServicesPage = lazyWithPreload(() =>
   import('@/pages/ServicesPage').then((module) => module.ServicesPage),
 )
+export const PartnershipsPage = lazyWithPreload(() =>
+  import('@/pages/PartnershipsPage').then((module) => module.PartnershipsPage),
+)
+export const CareersPage = lazyWithPreload(() =>
+  import('@/pages/CareersPage').then((module) => module.CareersPage),
+)
+export const ContactPage = lazyWithPreload(() =>
+  import('@/pages/ContactPage').then((module) => module.ContactPage),
+)
 
 const modules: Partial<Record<PageId, { preload: () => Promise<void> }>> = {
   'privacy-policy': PrivacyPolicyPage,
@@ -57,6 +66,9 @@ const modules: Partial<Record<PageId, { preload: () => Promise<void> }>> = {
   team: GovernancePage,
   about: AboutPage,
   services: ServicesPage,
+  partnerships: PartnershipsPage,
+  careers: CareersPage,
+  contact: ContactPage,
 }
 
 /** Load the page module for `pathname` (if it is code-split) so hydration happens in place. */

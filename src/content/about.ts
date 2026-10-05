@@ -1,3 +1,4 @@
+import { officePhotos, type Photo } from '@/content/photos'
 import { homeAbout, homeProof, type ProcessStep, type Stat, type Statement } from '@/content/home'
 
 /**
@@ -11,13 +12,7 @@ export interface Milestone {
   text: string
 }
 
-export interface AboutPhoto {
-  src: string
-  srcSet: string
-  width: number
-  height: number
-  alt: string
-}
+export type AboutPhoto = Photo
 
 export const about = {
   story: {
@@ -55,14 +50,7 @@ export const about = {
        *  prepare young professionals to excel in both local and international markets" */
       'We have delivered mobile and web applications and digital transformation projects, and supported over 150 African businesses with affordable, scalable and customized digital solutions. Through our internship and mentorship programs, we have trained over 200 interns from various universities, and several have joined our team full time.',
     ],
-    photo: {
-      src: '/images/about/sumic-team-at-work-1200w.webp',
-      srcSet:
-        '/images/about/sumic-team-at-work-600w.webp 600w, /images/about/sumic-team-at-work-1200w.webp 1200w',
-      width: 1200,
-      height: 799,
-      alt: 'Two members of the Sumic team working at their desks',
-    } satisfies AboutPhoto,
+    photo: officePhotos.teamAtWork,
   },
   milestones: {
     title: 'Milestones',
@@ -92,14 +80,7 @@ export const about = {
     ] satisfies Milestone[],
   },
   band: {
-    photo: {
-      src: '/images/about/sumic-office-1600w.webp',
-      srcSet:
-        '/images/about/sumic-office-800w.webp 800w, /images/about/sumic-office-1600w.webp 1600w',
-      width: 1600,
-      height: 1065,
-      alt: 'The Sumic IT Solutions office: team members at their desks in front of a Sumic banner',
-    } satisfies AboutPhoto,
+    photo: officePhotos.office,
     /** Live: "Our journey is one of growth, resilience, and unwavering commitment to delivering
      *  excellence in technology and innovation." */
     quote:

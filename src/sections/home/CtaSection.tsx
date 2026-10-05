@@ -1,12 +1,7 @@
 import { useId } from 'react'
 
 import { CtaBand } from '@/components/blocks/CtaBand'
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion'
+import { FaqAccordion } from '@/components/blocks/FaqAccordion'
 import type { FaqItem, HomeCta } from '@/content/home'
 
 /** Home closing CTA: the shared CtaBand with a FAQ card beside it (answers from the live site). */
@@ -33,16 +28,7 @@ function FaqCard({ title, items }: { title: string; items: readonly FaqItem[] })
       <h3 id={titleId} className="mb-2 text-xl">
         {title}
       </h3>
-      <Accordion type="single" collapsible aria-labelledby={titleId}>
-        {items.map((item) => (
-          <AccordionItem key={item.question} value={item.question}>
-            <AccordionTrigger className="py-4 text-base text-brand-heading">
-              {item.question}
-            </AccordionTrigger>
-            <AccordionContent className="text-base text-pretty">{item.answer}</AccordionContent>
-          </AccordionItem>
-        ))}
-      </Accordion>
+      <FaqAccordion items={items} labelledBy={titleId} />
     </div>
   )
 }

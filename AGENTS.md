@@ -28,23 +28,26 @@ src/
   components/layout/    SiteLayout, Navbar, MobileNav (+ lazy MobileNavSheet), Footer, Container, Section,
                         Logo, AppLink, BackToTop, ScrollManager, RouteMeta
   components/blocks/    shared page blocks: PageHero, CtaBand, FeatureList, Prose, LegalDocument,
-                        TableOfContents, PeopleGrid, OrgTree, StatementCard, PartnerLogos (logo + static grid)
+                        TableOfContents, PeopleGrid, OrgTree, StatementCard, PartnerLogos (logo + static grid),
+                        CaseStudyCard, JobListing, MapFacade (click-to-load map), FaqAccordion
   components/icons/     brand icons lucide doesn't ship (SocialIcon); serviceIcons (one icon per service)
   components/motion/    MotionScope (Motion providers) and Reveal
   sections/home/        one file per home page section (StatsRow, ProcessTimeline are reused on About)
   sections/services/    ServiceDetail (+ FeaturedServiceDetail), ServiceNav
+  sections/contact/     ContactForm
   content/              ALL copy and data as typed TS objects
                           site.ts (company, nav, contact), services.ts, partners.ts,
                           home.ts (all home section copy), pages.ts (every route: path, title, description,
                           breadcrumb, hero copy) + redirects, company.ts (Sumic meaning, founder, governance + team),
                           about.ts (About page), services-page.ts (Services page long copy, loaded
-                          with that page only), legal/ (privacy, cookies, terms as typed blocks), testimonials.ts,
+                          with that page only), partnerships.ts, careers.ts (+ jobOpenings, application
+                          mailto helpers), contact.ts, photos.ts (shared office photos), legal/ (privacy, cookies, terms as typed blocks), testimonials.ts,
                           ui.ts (interface labels, a11y names)
   pages/                one component per route (HomePage, PlannedPage, NotFoundPage, ...)
   routes/               AppRoutes (route table), meta.ts (head tags per path), pageModules.ts
                         (code-split page modules + preloadRoute), lazyWithPreload
   hooks/                useActiveSection (in-page nav highlight), useScrolledPast, useMediaQuery, ...
-  lib/
+  lib/                  contact.ts (submitContactForm stub + form types), mailto.ts (mailtoHref), nav, utils
   entry-server.tsx      build-time prerender entry (see "Rendering and performance")
 scripts/prerender.mjs   post-build: prerenders every route to dist/<path>/index.html (+ 404.html, redirect
                         stubs, sitemap.xml)
@@ -52,7 +55,8 @@ docs/redesign-plan.md   site audit, sitemap, redirects, forms and build order fo
 public/brand/           logos and brand imagery (pulled from the live site; brand-kit files will replace them)
 public/brand/partners/  partner logos
 public/brand/products/  real screenshots of Sumic's own products (desktop + phone)
-public/images/          page photography and diagrams as WebP (team/, governance/, about/, services/)
+public/images/          page photography and diagrams as WebP (team/, governance/, about/, services/,
+                        partnerships/)
 brand-originals/        unmodified source files for everything in public/brand and public/images (not served)
 ```
 
@@ -75,7 +79,8 @@ Import from `src` using the `@/` alias (`@/components/ui/button`).
 - Interface labels and accessible names ("Open menu", "Skip to content") live in `src/content/ui.ts`.
 - Render partners from `confirmedPartners` (it excludes entries whose name is still `TODO:`), never from `partners` directly.
 - Content comes from sumicitsolutions.com. **Never invent clients, testimonials, stats or awards.** If something is missing, use a clearly marked `TODO:` placeholder.
-- Company email is **it@sumiconline.com** everywhere (`site.contact.email`); visible text and `mailto:` must match.
+- Company email is **it@sumiconline.com** everywhere (`site.contact.email`); visible text and `mailto:` must match. The one exception is job applications: HR (`hr@`) with CC `careers@`, exactly as the live Careers page states (`applicationEmail` in careers.ts). Build mailto links with `mailtoHref()` (prefilled subjects: "Partnership enquiry", "Application – <role>" / "General application").
+- **Job openings** come only from roles Sumic has published (`jobOpenings` in careers.ts). While the list is empty, Careers shows the "No open roles right now" state with the LinkedIn link.
 - Stats are shown exactly as on the live site (`homeProof.stats` in `home.ts`), with no added explanations.
 - **Legal text is verbatim.** `src/content/legal/*.ts` hold the live privacy, cookies and terms text as typed blocks (`types.ts`): h2s carry slug ids for the table of contents; the document title lives in the hero and "Last updated" in `lastUpdated`. Only frontend presentation may change, never wording. Each legal route loads only its own document module (`legalPage()` in `routes/pageModules.ts`).
 - Rewritten copy (company.ts, about.ts, services-page.ts, services.ts checklist forms) keeps the live original in a JSDoc comment above it, so changes stay reviewable.
@@ -95,6 +100,12 @@ Import from `src` using the `@/` alias (`@/components/ui/button`).
 - Font: **Satoshi** (Indian Type Foundry, ITF Free Font License) for headings and body. It's self-hosted as one variable woff2 file (weights 300–900) in `src/assets/fonts/satoshi/`, with its licence in `LICENSE-FFL.txt`. The licence forbids redistributing the font files, so don't put them in a public repository or font service. Headings: weight 700, letter-spacing -0.02em, line-height 1.05 (set in the base layer; don't override per heading). Body: weight 400, 500 for emphasis. Hero h1 tops out around 76px.
 - Vertical rhythm: sections use `py-12 sm:py-16 lg:py-22` (the `Section` component); keep custom bands on the same scale.
 - Light mode only for now. Dark mode will override the brand-role and semantic token layers in `src/index.css`; don't hardcode light-only colours in components.
+
+### Forms
+
+- The contact form is frontend only. It submits through `submitContactForm()` in `src/lib/contact.ts` (a typed stub marked `TODO(backend)`); connect a backend by replacing that function only.
+- Pattern (follow it for any new form): uncontrolled shadcn inputs (`Field`, `FieldLabel`, `Input`, `Textarea`, `NativeSelect`) with `name`, `autoComplete`, the right `type`/`inputMode`; `noValidate` and validation on submit; inline errors linked with `aria-invalid` + `aria-describedby` (pass `role={undefined}` to `FieldError`, so errors aren't each announced as alerts); focus the first invalid field; one polite `role="status"` region for the error summary, sending and result; fields re-check as they are edited once they've shown an error (not on blur: clearing an error on blur shifts the layout under the pointer). The submit button uses `aria-disabled` while sending (a `disabled` button drops focus). Include the hidden honeypot field.
+- **No third-party requests before the visitor asks.** The Google map is a `MapFacade` (static code-drawn preview; the embed loads on "Show map"). Use the same click-to-load approach for any future embed.
 
 ### Responsive
 

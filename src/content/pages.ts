@@ -3,7 +3,7 @@
  * meta description, breadcrumb label and page-hero copy.
  *
  * Source: the live pages at https://sumicitsolutions.com/ (crawled 2026-10-02). Hero copy is the
- * live page's own heading and intro line. `status: 'planned'` pages render the shared PageHero
+ * live page's own heading and intro line. `status: 'built'` pages render the shared PageHero
  * only until their content is built.
  */
 
@@ -121,7 +121,7 @@ export const pages: readonly PageMeta[] = [
     description:
       'Collaborations between Sumic IT Solutions Ltd and partners in Uganda, Japan and beyond, from AI healthcare training to travel and team-performance platforms.',
     breadcrumb: 'Partnerships',
-    status: 'planned',
+    status: 'built',
     hero: {
       title: 'Sumic partnerships',
       intro: 'Meaningful collaborations that drive innovation and deliver impactful solutions.',
@@ -134,7 +134,7 @@ export const pages: readonly PageMeta[] = [
     description:
       'Join the Sumic Tribe: careers and the Sumic Internship Program at Sumic IT Solutions Ltd.',
     breadcrumb: 'Careers',
-    status: 'planned',
+    status: 'built',
     hero: {
       title: 'Join our team',
       intro:
@@ -148,7 +148,7 @@ export const pages: readonly PageMeta[] = [
     description:
       'Request a free consultation or reach Sumic IT Solutions Ltd on New Port Bell Road, Kampala: it@sumiconline.com, +256 200 930 793.',
     breadcrumb: 'Contact',
-    status: 'planned',
+    status: 'built',
     hero: {
       title: 'Contact us',
       intro: 'Request a free consultation, or reach us directly.',

@@ -53,6 +53,8 @@ export interface SiteContent {
   cta: NavLink
   contact: {
     address: string
+    /** Building and floor, as on the live contact page. */
+    building: string
     mapUrl: string
     email: string
     phone: { display: string; href: string }
@@ -97,6 +99,7 @@ export const site: SiteContent = {
   cta: { label: 'Talk to us', href: '/contact/' },
   contact: {
     address: 'New Port Bell Road, P.O.BOX 172928, Kampala GPO',
+    building: 'National ICT Innovation Hub Bldg, 1st Floor',
     mapUrl: 'https://goo.gl/maps/fvbsxE6NsJfnmGfz8',
     // Company email confirmed by Sumic (2026-10-02); visible text and mailto always match.
     email: 'it@sumiconline.com',

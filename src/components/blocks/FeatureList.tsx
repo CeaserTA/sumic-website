@@ -15,6 +15,8 @@ interface FeatureListProps {
   columns?: 2 | 3 | 4
   /** Surface the list sits on; sets text and icon colours for contrast. */
   tone?: 'light' | 'dark'
+  /** Item titles are h3 under a section h2; use 4 when the list sits under an h3. */
+  headingLevel?: 3 | 4
   className?: string
 }
 
@@ -22,10 +24,17 @@ const columnClasses = { 2: 'lg:grid-cols-2', 3: 'lg:grid-cols-3', 4: 'lg:grid-co
 
 /**
  * Icon + title + text items in a responsive grid (e.g. "Why choose us", core values,
- * internship benefits). Titles are h3, so place it under a section's h2.
+ * internship benefits). Titles are h3 (or h4 with headingLevel={4}).
  */
-export function FeatureList({ items, columns = 3, tone = 'light', className }: FeatureListProps) {
+export function FeatureList({
+  items,
+  columns = 3,
+  tone = 'light',
+  headingLevel = 3,
+  className,
+}: FeatureListProps) {
   const dark = tone === 'dark'
+  const Title = headingLevel === 4 ? 'h4' : 'h3'
 
   return (
     <ul className={cn('grid gap-x-8 gap-y-10 sm:grid-cols-2', columnClasses[columns], className)}>
@@ -45,7 +54,9 @@ export function FeatureList({ items, columns = 3, tone = 'light', className }: F
                 <Icon aria-hidden="true" className="size-5" />
               </span>
             )}
-            <h3 className={cn('text-xl', dark && 'text-brand-primary-foreground')}>{item.title}</h3>
+            <Title className={cn('text-xl', dark && 'text-brand-primary-foreground')}>
+              {item.title}
+            </Title>
             <p className={cn('text-pretty', dark && 'text-brand-primary-foreground/80')}>
               {item.text}
             </p>

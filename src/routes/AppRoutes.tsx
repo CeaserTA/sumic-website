@@ -7,9 +7,12 @@ import { HomePage } from '@/pages/HomePage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 import {
   AboutPage,
+  CareersPage,
+  ContactPage,
   CookiesPolicyPage,
   FounderPage,
   GovernancePage,
+  PartnershipsPage,
   PlannedPage,
   PrivacyPolicyPage,
   ServicesPage,
@@ -36,6 +39,12 @@ function pageElement(id: PageId): ReactNode {
       return <AboutPage />
     case 'services':
       return <ServicesPage />
+    case 'partnerships':
+      return <PartnershipsPage />
+    case 'careers':
+      return <CareersPage />
+    case 'contact':
+      return <ContactPage />
     default:
       return <PlannedPage pageId={id} />
   }
