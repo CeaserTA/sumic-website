@@ -1,20 +1,18 @@
 import { useId, type ReactNode } from 'react'
 import { MailIcon, MapPinIcon, PhoneIcon, type LucideIcon } from 'lucide-react'
 
-import { FaqAccordion } from '@/components/blocks/FaqAccordion'
-import { MapFacade } from '@/components/blocks/MapFacade'
+import { MapEmbed } from '@/components/blocks/MapEmbed'
 import { PageHero } from '@/components/blocks/PageHero'
 import { SocialIcon } from '@/components/icons/SocialIcon'
 import { Section } from '@/components/layout/Section'
 import { contactPage } from '@/content/contact'
-import { homeCta } from '@/content/home'
 import { pageById } from '@/content/pages'
 import { site } from '@/content/site'
 import { ui } from '@/content/ui'
 import { ContactForm } from '@/sections/contact/ContactForm'
 
 /**
- * Contact: the consultation form beside the contact details, a click-to-load map and the FAQ.
+ * Contact: the consultation form beside the contact details, then the map.
  * No CtaBand: the whole page is the call to action.
  */
 export function ContactPage() {
@@ -23,7 +21,6 @@ export function ContactPage() {
   const { details, map } = contactPage
   const { contact } = site
   const socialTitleId = useId()
-  const fullAddress = `${contact.address}, ${contact.building}`
 
   return (
     <>
@@ -87,21 +84,12 @@ export function ContactPage() {
 
       <Section id="map" tone="muted" title={map.title}>
         <div className="mt-8 lg:mt-10">
-          <MapFacade
+          <MapEmbed
             embedUrl={map.embedUrl}
             mapUrl={contact.mapUrl}
             iframeTitle={map.iframeTitle}
-            address={fullAddress}
-            note={map.previewNote}
-            showLabel={map.show}
             openLabel={map.open}
           />
-        </div>
-      </Section>
-
-      <Section id="faq" title={homeCta.faqTitle}>
-        <div className="mt-6 max-w-3xl lg:mt-8">
-          <FaqAccordion items={homeCta.faq} />
         </div>
       </Section>
     </>

@@ -29,7 +29,7 @@ src/
                         Logo, AppLink, BackToTop, ScrollManager, RouteMeta
   components/blocks/    shared page blocks: PageHero, CtaBand, FeatureList, Prose, LegalDocument,
                         TableOfContents, OrgTree, team/ (TeamCarousel, TeamCard), StatementCard, PartnerLogos (logo + static grid),
-                        CaseStudyCard, JobListing, MapFacade (click-to-load map), FaqAccordion
+                        CaseStudyCard, JobListing, MapEmbed (lazy Google map), FaqAccordion
   components/icons/     brand icons lucide doesn't ship (SocialIcon); serviceIcons (one icon per service)
   components/motion/    MotionScope (Motion providers) and Reveal
   sections/home/        one file per home page section (StatsRow, ProcessTimeline are reused on About)
@@ -106,7 +106,7 @@ Import from `src` using the `@/` alias (`@/components/ui/button`).
 
 - The contact form is frontend only. It submits through `submitContactForm()` in `src/lib/contact.ts` (a typed stub marked `TODO(backend)`); connect a backend by replacing that function only.
 - Pattern (follow it for any new form): uncontrolled shadcn inputs (`Field`, `FieldLabel`, `Input`, `Textarea`, `NativeSelect`) with `name`, `autoComplete`, the right `type`/`inputMode`; `noValidate` and validation on submit; inline errors linked with `aria-invalid` + `aria-describedby` (pass `role={undefined}` to `FieldError`, so errors aren't each announced as alerts); focus the first invalid field; one polite `role="status"` region for the error summary, sending and result; fields re-check as they are edited once they've shown an error (not on blur: clearing an error on blur shifts the layout under the pointer). The submit button uses `aria-disabled` while sending (a `disabled` button drops focus). Include the hidden honeypot field.
-- **No third-party requests before the visitor asks.** The Google map is a `MapFacade` (static code-drawn preview; the embed loads on "Show map"). Use the same click-to-load approach for any future embed.
+- **Third-party embeds load lazily.** The Contact page's Google map (`MapEmbed`) is always shown, as an `iframe` with `loading="lazy"`, so Google is contacted only when the visitor scrolls near it and first paint is never delayed. Give every embed a `title`, and keep a plain link alternative ("Open in Google Maps").
 
 ### Responsive
 

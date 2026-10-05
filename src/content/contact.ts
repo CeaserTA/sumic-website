@@ -67,8 +67,6 @@ export const contactPage = {
   },
   map: {
     title: 'Find us',
-    previewNote: 'The map loads from Google when you choose to show it.',
-    show: 'Show map',
     open: 'Open in Google Maps',
     iframeTitle: 'Map: Sumic IT Solutions Ltd, New Port Bell Road, Kampala',
     // The live contact page's embed (place: Sumic IT Solutions Ltd.).
