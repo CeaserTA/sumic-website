@@ -140,22 +140,37 @@ export const founder = {
 
 /* ------------------------------------------------------------------ Governance */
 
+export interface TeamImage {
+  src: string
+  srcSet: string
+  width: number
+  height: number
+}
+
 export interface Person {
   name: string
   role: string
-  photo: { src: string; srcSet: string; width: number; height: number }
-  /** Optional link to a bio page. */
+  /** Full-bleed 4:5 portrait (cropped from the square originals in brand-originals/team/). */
+  photo: TeamImage
+  /**
+   * Optional background-removed cut-out (transparent WebP/PNG, 4:5, person standing at the bottom
+   * edge). When set, the team card switches to the cut-out style: the person overlaps the name
+   * panel, as on the reference design.
+   */
+  cutout?: TeamImage
+  /** Optional link to a bio page (shown under the carousel while this person is in front). */
   bio?: { label: string; href: string }
   /** Optional LinkedIn profile (none are published on the live site yet). */
   linkedin?: string
 }
 
-function teamPhoto(file: string) {
+// 4:5 crops (centre, full height) of the 1600×1600 originals, 400w and 800w.
+function teamPhoto(file: string): TeamImage {
   return {
-    src: `/images/team/${file}-640w.webp`,
-    srcSet: `/images/team/${file}-320w.webp 320w, /images/team/${file}-640w.webp 640w`,
-    width: 640,
-    height: 640,
+    src: `/images/team/${file}-card-800w.webp`,
+    srcSet: `/images/team/${file}-card-400w.webp 400w, /images/team/${file}-card-800w.webp 800w`,
+    width: 800,
+    height: 1000,
   }
 }
 
@@ -233,6 +248,8 @@ export const governance = {
      *  drive progress in business and the world." */
     intro:
       'The new creators, visionaries who apply technology in innovative ways to drive progress in business and the world.',
+    // In front of the carousel on load.
+    startWith: 'Cirus Sumika',
     // Order, names and roles as on the live /team/ page.
     people: [
       {

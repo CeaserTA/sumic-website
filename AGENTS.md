@@ -28,7 +28,7 @@ src/
   components/layout/    SiteLayout, Navbar, MobileNav (+ lazy MobileNavSheet), Footer, Container, Section,
                         Logo, AppLink, BackToTop, ScrollManager, RouteMeta
   components/blocks/    shared page blocks: PageHero, CtaBand, FeatureList, Prose, LegalDocument,
-                        TableOfContents, PeopleGrid, OrgTree, StatementCard, PartnerLogos (logo + static grid),
+                        TableOfContents, OrgTree, team/ (TeamCarousel, TeamCard), StatementCard, PartnerLogos (logo + static grid),
                         CaseStudyCard, JobListing, MapFacade (click-to-load map), FaqAccordion
   components/icons/     brand icons lucide doesn't ship (SocialIcon); serviceIcons (one icon per service)
   components/motion/    MotionScope (Motion providers) and Reveal
@@ -85,7 +85,8 @@ Import from `src` using the `@/` alias (`@/components/ui/button`).
 - **Legal text is verbatim.** `src/content/legal/*.ts` hold the live privacy, cookies and terms text as typed blocks (`types.ts`): h2s carry slug ids for the table of contents; the document title lives in the hero and "Last updated" in `lastUpdated`. Only frontend presentation may change, never wording. Each legal route loads only its own document module (`legalPage()` in `routes/pageModules.ts`).
 - Rewritten copy (company.ts, about.ts, services-page.ts, services.ts checklist forms) keeps the live original in a JSDoc comment above it, so changes stay reviewable.
 - Service lists ("What's included") name only items stated in the live service text.
-- Team photos: one square crop per person (640w/320w WebP, `teamPhoto()` in company.ts); alt text is "Name, Role" (PeopleGrid builds it).
+- Team photos: one 4:5 crop per person (`-card-800w/400w.webp`, `teamPhoto()` in company.ts), always in full colour (no grayscale, duotone or overlays on faces). A person may also get a `cutout` (background-removed, transparent, 4:5, standing on the bottom edge); `TeamCard` then switches to the cut-out style, where the person overlaps the name panel. Card images are `alt=""` because the name and role are right below in text.
+- **Governance team carousel** (`TeamCarousel`): a 3D coverflow on md+ (front card flat; neighbours turned in 3D, scaled and tucked behind, 350ms staggered transitions; prev/next buttons and arrow keys; click a side card to bring it forward; a polite announcement; screen readers get the full team as a list), a scroll-snap swipe row on phones (buttons stay visible), and a static grid under reduced motion. CSS media queries pick the variant, so hydration never swaps layouts. Starts with `governance.team.startWith` (the founder) and has no autoplay. A person's `bio` link shows under the carousel only while they're in front.
 - **Sample testimonials never ship.** Fictional testimonials for layout work must have `isSample: true` and be defined inside the `import.meta.env.DEV` branch in `src/content/testimonials.ts`. Render only `visibleTestimonials`, which excludes samples in production. Production builds must contain no sample text, and the testimonials block stays hidden until real, consented testimonials are added to `realTestimonials`. In dev, samples show a "Sample content" badge.
 
 ### Styling

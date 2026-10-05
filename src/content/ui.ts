@@ -20,6 +20,15 @@ export const ui = {
     play: 'Play logo animation',
   },
   backToTop: 'Back to top',
+  teamCarousel: {
+    label: 'Management team',
+    previous: 'Previous team member',
+    next: 'Next team member',
+    // Announced (politely) when the person in front changes.
+    current: (name: string, role: string, position: number, total: number) =>
+      `${name}, ${role}. ${position} of ${total}.`,
+    show: (name: string) => `Show ${name}`,
+  },
   toc: {
     title: 'On this page',
   },
