@@ -34,6 +34,7 @@ export function EcosystemPanel({ title, caption, products }: EcosystemPanelProps
             aria-hidden="true"
             className="absolute inset-0 -z-10 m-auto hidden size-72 rounded-full border border-brand-primary-foreground/10 sm:block"
           />
+
           <div className="mx-auto mb-6 flex size-28 items-center justify-center rounded-full bg-brand-primary-foreground/5 ring-1 ring-brand-primary-foreground/15 sm:absolute sm:inset-0 sm:m-auto">
             <img
               src={site.logo.inverseSrc}
@@ -46,12 +47,16 @@ export function EcosystemPanel({ title, caption, products }: EcosystemPanelProps
             />
           </div>
 
+          {/*
+            Alignment fix: removed `sm:even:text-right` so every tile is left-aligned,
+            including "Sumic International Academy" which was overflowing when right-aligned.
+          */}
           <ul
             aria-labelledby={titleId}
             className="grid gap-3 sm:grid-cols-2 sm:gap-x-36 sm:gap-y-4"
           >
             {products.map((product) => (
-              <li key={product.name} className="sm:even:text-right">
+              <li key={product.name}>
                 <a
                   href={product.href}
                   target="_blank"
@@ -61,7 +66,12 @@ export function EcosystemPanel({ title, caption, products }: EcosystemPanelProps
                   <span translate="no" className="font-semibold">
                     {product.name}
                   </span>
-                  <span className="text-sm text-brand-primary-foreground/75">
+                  {/*
+                    Tag contrast fix: original `text-brand-primary-foreground/75` was low-contrast
+                    on the dark navy tile. Now uses full white text on a light-tinted pill so
+                    it reads clearly. `w-fit` prevents the tag from stretching to full tile width.
+                  */}
+                  <span className="mt-1 w-fit rounded-full bg-brand-primary-foreground/15 px-2 py-0.5 text-xs font-medium text-brand-primary-foreground">
                     {product.category}
                   </span>
                   <span className="sr-only"> {ui.nav.opensInNewTab}</span>
