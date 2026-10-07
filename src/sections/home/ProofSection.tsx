@@ -13,19 +13,32 @@ interface ProofSectionProps {
   testimonials: readonly Testimonial[]
 }
 
-/** Stats, process, partners and (once supplied) testimonials. Empty blocks render nothing. */
+/**
+ * "Why Sumic" section.
+ * The heading and eyebrow are now owned by StatsRow as a large display
+ * headline, so Section renders with no title prop (no duplicate heading).
+ */
 export function ProofSection({ content, partners, testimonials }: ProofSectionProps) {
   return (
-    <Section id="proof" eyebrow={content.eyebrow} title={content.title}>
-      <div className="mt-10 flex flex-col gap-16 lg:mt-12 lg:gap-20">
-        <StatsRow stats={content.stats} />
+    <Section id="proof" tone="muted">
+      <div className="flex flex-col gap-16 lg:gap-20">
+
+        <StatsRow
+          eyebrow={content.eyebrow}
+          title={content.title}
+          stats={content.stats}
+        />
+
         <ProcessTimeline
           title={content.process.title}
           intro={content.process.intro}
           steps={content.process.steps}
         />
+
         <PartnersMarquee title={content.partnersTitle} partners={partners} />
+
         <Testimonials title={content.testimonialsTitle} testimonials={testimonials} />
+
       </div>
     </Section>
   )

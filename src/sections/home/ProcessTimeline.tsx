@@ -1,7 +1,5 @@
 import { useId } from 'react'
-import { m } from 'motion/react'
 
-import { MotionScope } from '@/components/motion/MotionScope'
 import { Reveal } from '@/components/motion/Reveal'
 import type { ProcessStep } from '@/content/home'
 
@@ -9,89 +7,102 @@ interface ProcessTimelineProps {
   title: string
   intro: string
   steps: readonly ProcessStep[]
-  /**
-   * 3 inside a titled section (home "Why Sumic"); 2 when the timeline is a section of its own
-   * (About), which also sizes the title like a section heading. Step titles go one level below.
-   */
   headingLevel?: 2 | 3
 }
 
 const headings = {
-  2: { Title: 'h2', Step: 'h3', className: 'text-3xl sm:text-4xl lg:text-5xl' },
-  3: { Title: 'h3', Step: 'h4', className: 'text-2xl font-bold sm:text-3xl' },
+  2: { Title: 'h2', Step: 'h3', titleClass: 'text-3xl sm:text-4xl lg:text-5xl' },
+  3: { Title: 'h3', Step: 'h4', titleClass: 'text-2xl font-bold sm:text-3xl' },
 } as const
 
-const lineTransition = { duration: 1.4, ease: [0.22, 1, 0.36, 1] } as const
-
 /**
- * The live site's development lifecycle. Horizontal on desktop, vertical below lg.
- * The connector draws itself once in view (a transform, so reduced motion shows it static).
+ * "How we work" — two-column layout:
+ *   LEFT  — photo, no border/card, bottom gradient blends into section bg,
+ *            height matches the right column exactly via CSS grid stretch.
+ *   RIGHT — 3×2 grid of step cards: dark navy background, step number
+ *            as a large faded watermark, title and text in white.
+ *            Completely different design from any other card on the page.
  */
 export function ProcessTimeline({ title, intro, steps, headingLevel = 3 }: ProcessTimelineProps) {
   const titleId = useId()
-  const { Title, Step, className } = headings[headingLevel]
+  const { Title, Step, titleClass } = headings[headingLevel]
 
   return (
-    <div className="flex flex-col gap-10">
-      <div className="flex max-w-2xl flex-col gap-3">
-        <Title id={titleId} className={className}>
-          {title}
-        </Title>
-        <p className="text-lg text-pretty">{intro}</p>
-      </div>
+    /* items-stretch so both columns are the same height */
+    <div className="grid gap-10 lg:grid-cols-2 lg:items-stretch lg:gap-14">
 
-      <MotionScope>
-        <div className="relative">
-          {/* Connector: vertical track below lg, horizontal from lg. */}
-          <div
-            aria-hidden="true"
-            className="absolute top-5 bottom-5 left-5 w-0.5 bg-brand-line lg:hidden"
-          >
-            <m.div
-              initial={{ scaleY: 0 }}
-              whileInView={{ scaleY: 1 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={lineTransition}
-              className="h-full w-full origin-top bg-brand-accent-ink"
-            />
-          </div>
-          <div
-            aria-hidden="true"
-            className="absolute top-5 right-[8%] left-[8%] hidden h-0.5 bg-brand-line lg:block"
-          >
-            <m.div
-              initial={{ scaleX: 0 }}
-              whileInView={{ scaleX: 1 }}
-              viewport={{ once: true, amount: 0.5 }}
-              transition={lineTransition}
-              className="h-full w-full origin-left bg-brand-accent-ink"
-            />
-          </div>
+      {/* ── LEFT: photo — height driven by the right column ── */}
+      <Reveal index={0} className="relative hidden overflow-hidden rounded-3xl lg:block">
+        {/*
+          h-full fills the grid row height (= height of the right column).
+          object-cover + object-center keeps the subject in frame at any ratio.
+        */}
+        <img
+          src="/images/services/how_wework1.jpg"
+          alt="Sumic IT Solutions team at work"
+          width={1200}
+          height={900}
+          loading="lazy"
+          decoding="async"
+          className="h-full w-full object-cover object-center"
+        />
+        {/* Bottom-edge gradient fades into the section background */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-brand-surface-muted to-transparent"
+        />
+      </Reveal>
 
-          <ol
-            aria-labelledby={titleId}
-            className="relative flex flex-col gap-8 lg:grid lg:grid-cols-6 lg:gap-6"
-          >
-            {steps.map((step, index) => (
-              <Reveal
-                key={step.title}
-                as="li"
-                index={index}
-                className="flex gap-5 lg:flex-col lg:items-center lg:text-center"
-              >
-                {/* A real sequence, so numbered markers carry meaning here. */}
-                <span className="relative z-10 grid size-10 shrink-0 place-items-center rounded-full bg-background font-heading font-bold text-brand-accent-ink ring-2 ring-brand-accent-ink">
+      {/* ── RIGHT: header + step cards ── */}
+      <div className="flex flex-col gap-7">
+
+        <div className="flex flex-col gap-2">
+          <p className="font-medium text-brand-accent-ink">Our process</p>
+          <Title id={titleId} className={titleClass}>{title}</Title>
+          <p className="mt-1 text-base text-pretty text-brand-text">{intro}</p>
+        </div>
+
+        <ol
+          aria-labelledby={titleId}
+          className="grid grid-cols-1 gap-3 sm:grid-cols-2"
+        >
+          {steps.map((step, index) => (
+            <Reveal key={step.title} as="li" index={index}>
+              {/*
+                Navy card with a large faded ordinal watermark.
+                Hover: slight lift + green top border appears.
+                Completely distinct from the white service cards and
+                the muted-bg stat rings elsewhere on the page.
+              */}
+              <div className="group relative h-full overflow-hidden rounded-2xl bg-brand-primary p-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand-primary/20 hover:ring-1 hover:ring-brand-accent/40 [--ring:var(--brand-accent)]">
+
+                {/* Large faded step number watermark — bottom-right */}
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -right-1 -bottom-3 select-none font-heading text-8xl font-bold leading-none text-brand-primary-foreground/8"
+                >
                   {index + 1}
                 </span>
-                <div className="flex flex-col gap-1.5 pt-1.5 lg:pt-0">
-                  <Step className="text-lg">{step.title}</Step>
-                  <p className="text-pretty">{step.text}</p>
-                </div>
-              </Reveal>
-            ))}
-          </ol>
-        </div>
-      </MotionScope>
+
+                {/* Small numbered badge */}
+                <span className="mb-3 flex size-6 items-center justify-center rounded-full bg-brand-accent font-heading text-[11px] font-bold text-brand-accent-foreground">
+                  {index + 1}
+                </span>
+
+                <Step className="mb-1.5 text-sm font-semibold text-brand-primary-foreground transition-colors group-hover:text-brand-accent">
+                  {step.title}
+                </Step>
+
+                <p className="text-xs leading-relaxed text-brand-primary-foreground/65">
+                  {step.text}
+                </p>
+
+              </div>
+            </Reveal>
+          ))}
+        </ol>
+
+      </div>
     </div>
   )
 }
