@@ -3,13 +3,13 @@ import { ChevronDownIcon } from 'lucide-react'
 import { CtaBand } from '@/components/blocks/CtaBand'
 import { OrgTree } from '@/components/blocks/OrgTree'
 import { PageHero } from '@/components/blocks/PageHero'
-import { PeopleGrid } from '@/components/blocks/PeopleGrid'
+import { TeamCarousel } from '@/components/blocks/team/TeamCarousel'
 import { Section } from '@/components/layout/Section'
 import { governance } from '@/content/company'
 import { homeCta } from '@/content/home'
 import { pageById } from '@/content/pages'
 
-/** Governance: structure (chart + text version) and the management team. */
+/** Governance: structure (chart + text version) and the management team (coverflow carousel). */
 export function GovernancePage() {
   const page = pageById('team')
   const home = pageById('home')
@@ -33,7 +33,8 @@ export function GovernancePage() {
               width={structure.chart.width}
               height={structure.chart.height}
               alt={structure.chart.alt}
-              loading="lazy"
+              // In the first viewport on phones and the page's LCP element: load it at once.
+              fetchPriority="high"
               decoding="async"
               className="mx-auto h-auto w-full max-w-5xl"
             />
@@ -57,7 +58,13 @@ export function GovernancePage() {
 
       <Section id="management-team" tone="muted" title={team.title} subtitle={team.intro}>
         <div className="mt-10 lg:mt-12">
-          <PeopleGrid people={team.people} />
+          <TeamCarousel
+            people={team.people}
+            startIndex={Math.max(
+              0,
+              team.people.findIndex((person) => person.name === team.startWith),
+            )}
+          />
         </div>
       </Section>
 
