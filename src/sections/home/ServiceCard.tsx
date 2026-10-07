@@ -78,8 +78,8 @@ export function FeaturedServiceCard({
       <ServiceCardIcon icon={icon} className="bg-brand-accent text-brand-accent-foreground" />
       <ServiceCardBody
         service={service}
-        titleClassName="text-brand-primary-foreground lg:text-3xl"
-        descriptionClassName="text-brand-primary-foreground/80 lg:text-lg"
+        titleClassName="text-brand-primary-foreground lg:text-2xl"
+        descriptionClassName="text-brand-primary-foreground/80"
       />
       <ServiceCardLink
         service={service}
@@ -103,7 +103,7 @@ function ServiceCardFrame({
     <SpotlightCard
       spotlightColor={spotlightColor}
       className={cn(
-        'flex h-full flex-col gap-5 rounded-2xl p-6 ring-1 transition-shadow duration-300 hover:shadow-lg hover:shadow-brand-primary/10 has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-ring sm:p-8',
+        'flex h-full flex-col gap-4 rounded-2xl p-4 ring-1 transition-shadow duration-300 hover:shadow-lg hover:shadow-brand-primary/10 has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-ring sm:p-5',
         className,
       )}
     >
@@ -114,8 +114,8 @@ function ServiceCardFrame({
 
 function ServiceCardIcon({ icon: Icon, className }: { icon: LucideIcon; className?: string }) {
   return (
-    <span className={cn('flex size-12 items-center justify-center rounded-xl', className)}>
-      <Icon aria-hidden="true" className="size-6" />
+    <span className={cn('flex size-9 items-center justify-center rounded-xl', className)}>
+      <Icon aria-hidden="true" className="size-4" />
     </span>
   )
 }
@@ -130,11 +130,11 @@ function ServiceCardBody({
   descriptionClassName?: string
 }) {
   return (
-    <div className="flex flex-col gap-2">
-      <h3 className={cn('text-xl text-pretty sm:text-2xl', titleClassName)}>
+    <div className="flex flex-col gap-1.5">
+      <h3 className={cn('text-base text-pretty sm:text-lg', titleClassName)}>
         {service.shortTitle ?? service.title}
       </h3>
-      <p className={cn('max-w-prose text-pretty', descriptionClassName)}>{service.description}</p>
+      <p className={cn('text-sm max-w-prose text-pretty', descriptionClassName)}>{service.description}</p>
     </div>
   )
 }
