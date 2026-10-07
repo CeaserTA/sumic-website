@@ -2,7 +2,6 @@ import { useId, type ReactNode } from 'react'
 import { ArrowRightIcon, MailIcon, PhoneIcon } from 'lucide-react'
 
 import { AppLink } from '@/components/layout/AppLink'
-import { Container } from '@/components/layout/Container'
 import { Button } from '@/components/ui/button'
 import type { NavLink } from '@/content/site'
 import { externalProps, navHref } from '@/lib/nav'
@@ -30,6 +29,10 @@ function LinkIcon({ href }: { href: string }) {
  * Closing call-to-action band, shared by every page: navy gradient, green only for the
  * primary button and accent line. Deliberately static (no scroll reveal): on short pages it
  * sits in the first viewport, and hidden-until-JS content there would delay LCP.
+ *
+ * Renders as an inset "floating card": the outer <section> provides a side margin
+ * (20-40px, growing with viewport) and the inner rounded panel holds the gradient
+ * and content, so it reads as a card sitting on the page rather than a full-bleed band.
  */
 export function CtaBand({ id, title, text, primary, secondary, aside }: CtaBandProps) {
   const titleId = useId()
@@ -39,39 +42,42 @@ export function CtaBand({ id, title, text, primary, secondary, aside }: CtaBandP
       id={id}
       tabIndex={-1}
       aria-labelledby={titleId}
-      className="bg-linear-to-b from-brand-primary to-[color-mix(in_oklab,var(--brand-primary),var(--brand-heading)_55%)] py-12 text-brand-primary-foreground defer-render outline-none [--ring:var(--brand-accent)] sm:py-16 lg:py-22"
+      className="px-6 py-8 defer-render outline-none sm:px-10 sm:py-10 lg:px-16 lg:py-12"
     >
-      <Container
-        className={cn('grid gap-12 lg:items-center lg:gap-16', aside && 'lg:grid-cols-12')}
-      >
-        <div className={cn('flex flex-col gap-6', aside && 'lg:col-span-7')}>
-          <span aria-hidden="true" className="h-1 w-12 rounded-full bg-brand-accent" />
-          <h2 id={titleId} className="text-[clamp(2rem,5vw,3.5rem)] text-brand-primary-foreground">
-            {title}
-          </h2>
-          <p className="max-w-xl text-lg text-pretty text-brand-primary-foreground/80 sm:text-xl">
-            {text}
-          </p>
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <Button asChild variant="accent" size="lg" className="h-12 px-6 text-base">
-              <AppLink href={navHref(primary)} {...externalProps(primary)}>
-                <LinkIcon href={primary.href} />
-                {primary.label}
-              </AppLink>
-            </Button>
-            {secondary && (
-              <Button asChild variant="outline-inverse" size="lg" className="h-12 px-6 text-base">
-                <AppLink href={navHref(secondary)} {...externalProps(secondary)}>
-                  <LinkIcon href={secondary.href} />
-                  {secondary.label}
+      <div className="mx-auto max-w-screen-xl overflow-hidden rounded-3xl bg-linear-to-b from-brand-primary to-[color-mix(in_oklab,var(--brand-primary),var(--brand-heading)_55%)] px-6 py-8 text-center text-brand-primary-foreground shadow-xl [--ring:var(--brand-accent)] sm:px-8 sm:py-9 lg:px-10 lg:py-10">
+        <div className={cn('grid items-center justify-center gap-8 lg:gap-10', aside && 'lg:grid-cols-12')}>
+          <div className={cn('flex flex-col items-center gap-5', aside && 'lg:col-span-7')}>
+            <span aria-hidden="true" className="h-1 w-12 rounded-full bg-brand-accent" />
+            <h2
+              id={titleId}
+              className="text-[clamp(2rem,5vw,3.5rem)] text-brand-primary-foreground"
+            >
+              {title}
+            </h2>
+            <p className="mx-auto max-w-xl text-lg text-pretty text-brand-primary-foreground/80 sm:text-xl">
+              {text}
+            </p>
+            <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+              <Button asChild variant="accent" size="lg" className="h-12 px-6 text-base">
+                <AppLink href={navHref(primary)} {...externalProps(primary)}>
+                  <LinkIcon href={primary.href} />
+                  {primary.label}
                 </AppLink>
               </Button>
-            )}
+              {secondary && (
+                <Button asChild variant="outline-inverse" size="lg" className="h-12 px-6 text-base">
+                  <AppLink href={navHref(secondary)} {...externalProps(secondary)}>
+                    <LinkIcon href={secondary.href} />
+                    {secondary.label}
+                  </AppLink>
+                </Button>
+              )}
+            </div>
           </div>
-        </div>
 
-        {aside && <div className="lg:col-span-5">{aside}</div>}
-      </Container>
+          {aside && <div className="lg:col-span-5">{aside}</div>}
+        </div>
+      </div>
     </section>
   )
 }
