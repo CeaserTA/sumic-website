@@ -1,16 +1,17 @@
-import { useId, type ReactNode } from 'react'
+import { useId } from 'react'
 import { CheckIcon, type LucideIcon } from 'lucide-react'
 
+import { AppLink } from '@/components/layout/AppLink'
 import { Reveal } from '@/components/motion/Reveal'
-import type { ServiceDetail as ServiceDetailContent, ServiceImage } from '@/content/services-page'
+import { Button } from '@/components/ui/button'
+import type { ServiceDetail as ServiceDetailContent } from '@/content/services-page'
 import type { Service } from '@/content/services'
 import { cn } from '@/lib/utils'
 
-/*
- * One service on the Services page, composed from small parts and exposed as two explicit
- * variants: ServiceDetail (light, text and image side by side from xl, either order) and
- * FeaturedServiceDetail (a navy panel). Each is a <section> with the service's anchor id, so
- * /services/#<anchor> deep-links to it (focusable for ScrollManager).
+/**
+ * One service section: two-column grid on desktop (text + image, alternating).
+ * Each section is full-width with its own padding and a soft alternating background.
+ * anchor id + scroll-mt-36 so the sticky tab bar deep-links land correctly.
  */
 
 interface ServiceDetailProps {
@@ -18,242 +19,115 @@ interface ServiceDetailProps {
   detail: ServiceDetailContent
   icon: LucideIcon
   includedTitle: string
-  /** 'eager' for the first section, which can sit in the first viewport. */
   imageLoading?: 'eager' | 'lazy'
+  layout?: 'text-first' | 'image-first'
+  index: number
 }
 
 export function ServiceDetail({
   service,
   detail,
-  icon,
+  icon: Icon,
   includedTitle,
-  imageLoading,
+  imageLoading = 'lazy',
   layout = 'text-first',
-}: ServiceDetailProps & {
-  /** Which column the image takes from xl up; text always comes first on smaller screens. */
-  layout?: 'text-first' | 'image-first'
-}) {
-  const titleId = useId()
-
-  return (
-    <ServiceSection service={service} titleId={titleId} className="py-12 sm:py-14 lg:py-16">
-      <div className="grid items-center gap-8 xl:grid-cols-2 xl:gap-12">
-        <div className="flex flex-col gap-5">
-          <ServiceIcon icon={icon} className="bg-brand-accent-ink/10 text-brand-accent-ink" />
-          <ServiceTitle id={titleId} service={service} />
-          <ServiceParagraphs paragraphs={detail.paragraphs} />
-          <IncludedList
-            title={includedTitle}
-            items={detail.included}
-            titleClassName="text-brand-heading"
-            checkClassName="bg-brand-accent-ink/10 text-brand-accent-ink"
-          />
-        </div>
-        <Reveal index={1} className={cn(layout === 'image-first' && 'xl:order-first')}>
-          <ServiceIllustration
-            image={detail.image}
-            loading={imageLoading}
-            className="ring-brand-line"
-          />
-        </Reveal>
-      </div>
-    </ServiceSection>
-  )
-}
-
-export function FeaturedServiceDetail({
-  service,
-  detail,
-  icon,
-  includedTitle,
-  imageLoading,
+  index,
 }: ServiceDetailProps) {
   const titleId = useId()
+  const isEven = index % 2 === 0
 
-  return (
-    <ServiceSection service={service} titleId={titleId} className="py-4 sm:py-6">
-      <div className="relative isolate overflow-hidden rounded-3xl bg-brand-primary p-6 text-brand-primary-foreground [--ring:var(--brand-accent)] sm:p-10 lg:p-12">
-        <SwooshArc />
-        <div className="flex flex-col gap-5">
-          <ServiceIcon icon={icon} className="bg-brand-accent text-brand-accent-foreground" />
-          <ServiceTitle
-            id={titleId}
-            service={service}
-            className="max-w-2xl text-brand-primary-foreground"
-          />
-          <div className="grid gap-8 xl:grid-cols-2 xl:gap-12">
-            <div className="flex flex-col gap-6">
-              <ServiceParagraphs
-                paragraphs={detail.paragraphs}
-                className="text-brand-primary-foreground/80"
-              />
-              <IncludedList
-                title={includedTitle}
-                items={detail.included}
-                titleClassName="text-brand-primary-foreground"
-                itemClassName="text-brand-primary-foreground/90"
-                checkClassName="bg-brand-accent text-brand-accent-foreground"
-              />
-            </div>
-            <ServiceIllustration
-              image={detail.image}
-              loading={imageLoading}
-              className="self-start ring-brand-primary-foreground/15"
-            />
-          </div>
-        </div>
-      </div>
-    </ServiceSection>
-  )
-}
-
-function ServiceSection({
-  service,
-  titleId,
-  className,
-  children,
-}: {
-  service: Service
-  titleId: string
-  className?: string
-  children: ReactNode
-}) {
   return (
     <section
       id={service.anchor}
       tabIndex={-1}
       aria-labelledby={titleId}
-      className={cn('outline-none', className)}
+      className={cn(
+        'scroll-mt-36 py-16 outline-none lg:py-24',
+        isEven ? 'bg-brand-surface-muted' : 'bg-brand-surface',
+      )}
     >
-      {children}
+      <div className="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
+        <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
+
+          {/* ── Text side ── */}
+          <div className={cn('flex flex-col gap-6', layout === 'image-first' && 'lg:order-last')}>
+
+            <span className="flex size-12 items-center justify-center rounded-xl bg-brand-accent-ink/10 text-brand-accent-ink">
+              <Icon aria-hidden="true" className="size-6" />
+            </span>
+
+            <h2
+              id={titleId}
+              className="text-3xl sm:text-4xl"
+            >
+              {service.id === 'ites-bpo' ? (
+                <>
+                  ITES &amp; BPO{' '}
+                  <span className="text-xl font-normal text-brand-text sm:text-2xl">
+                    (Information Technology Enabled Services &amp; Business Process Outsourcing)
+                  </span>
+                </>
+              ) : (
+                service.title
+              )}
+            </h2>
+
+            <div className="flex flex-col gap-4">
+              {detail.paragraphs.map((paragraph, i) => (
+                <p
+                  key={i}
+                  className={cn(
+                    'max-w-[40rem] text-pretty',
+                    i === 0 ? 'text-lg text-brand-heading' : 'text-base text-brand-text',
+                  )}
+                >
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <h3 className="text-base font-semibold text-brand-heading">{includedTitle}</h3>
+              <ul className="grid gap-x-6 gap-y-3 sm:grid-cols-2">
+                {detail.included.map((item) => (
+                  <li key={item} className="flex items-start gap-2.5">
+                    <span
+                      aria-hidden="true"
+                      className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-brand-accent-ink/10 text-brand-accent-ink"
+                    >
+                      <CheckIcon className="size-3.5" strokeWidth={3} />
+                    </span>
+                    <span className="text-base text-pretty text-brand-text">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <Button asChild size="lg" className="h-12 w-fit px-6 text-base">
+              <AppLink href="/contact/">Request this service</AppLink>
+            </Button>
+          </div>
+
+          {/* ── Image side ── */}
+          <Reveal index={1} className={cn(layout === 'image-first' && 'lg:order-first')}>
+            <img
+              src={detail.image.src}
+              srcSet={detail.image.srcSet}
+              sizes="(min-width: 1024px) 50vw, 92vw"
+              width={detail.image.width}
+              height={detail.image.height}
+              alt=""
+              loading={imageLoading}
+              decoding="async"
+              className="aspect-[4/3] w-full rounded-3xl object-cover shadow-lg transition-transform duration-300 hover:scale-[1.02]"
+            />
+          </Reveal>
+
+        </div>
+      </div>
     </section>
   )
 }
 
-function ServiceIcon({ icon: Icon, className }: { icon: LucideIcon; className?: string }) {
-  return (
-    <span className={cn('flex size-12 items-center justify-center rounded-xl', className)}>
-      <Icon aria-hidden="true" className="size-6" />
-    </span>
-  )
-}
-
-function ServiceTitle({
-  id,
-  service,
-  className,
-}: {
-  id: string
-  service: Service
-  className?: string
-}) {
-  return (
-    <h2 id={id} className={cn('text-3xl sm:text-4xl', className)}>
-      {service.title}
-    </h2>
-  )
-}
-
-function ServiceParagraphs({
-  paragraphs,
-  className,
-}: {
-  paragraphs: readonly string[]
-  className?: string
-}) {
-  return (
-    <div className={cn('flex flex-col gap-4 text-lg leading-relaxed', className)}>
-      {paragraphs.map((paragraph, index) => (
-        <p key={index} className="max-w-[40rem] text-pretty">
-          {paragraph}
-        </p>
-      ))}
-    </div>
-  )
-}
-
-function IncludedList({
-  title,
-  items,
-  titleClassName,
-  itemClassName,
-  checkClassName,
-}: {
-  title: string
-  items: readonly string[]
-  titleClassName?: string
-  itemClassName?: string
-  checkClassName?: string
-}) {
-  const titleId = useId()
-
-  return (
-    <div className="flex flex-col gap-3 pt-2">
-      <h3 id={titleId} className={cn('text-lg', titleClassName)}>
-        {title}
-      </h3>
-      <ul aria-labelledby={titleId} className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-1">
-        {items.map((item) => (
-          <li key={item} className={cn('flex items-start gap-3', itemClassName)}>
-            <span
-              aria-hidden="true"
-              className={cn(
-                'mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full',
-                checkClassName,
-              )}
-            >
-              <CheckIcon className="size-3.5" strokeWidth={3} />
-            </span>
-            <span className="text-pretty">{item}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  )
-}
-
-/**
- * The live site's illustration. Decorative: its lettering repeats the section's own copy.
- */
-function ServiceIllustration({
-  image,
-  loading = 'lazy',
-  className,
-}: {
-  image: ServiceImage
-  loading?: 'eager' | 'lazy'
-  className?: string
-}) {
-  return (
-    <img
-      src={image.src}
-      srcSet={image.srcSet}
-      sizes="(min-width: 1280px) 480px, (min-width: 1024px) 70vw, 92vw"
-      width={image.width}
-      height={image.height}
-      alt=""
-      loading={loading}
-      decoding="async"
-      className={cn('aspect-[3/2] w-full rounded-2xl object-cover ring-1', className)}
-    />
-  )
-}
-
-/** Echo of the swoosh in the Sumic logo (decorative). */
-function SwooshArc() {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 400 200"
-      fill="none"
-      className="pointer-events-none absolute -top-6 -right-24 -z-10 w-[26rem] text-brand-accent opacity-25"
-    >
-      <path
-        d="M20 190 C 110 50, 300 10, 390 110"
-        stroke="currentColor"
-        strokeWidth="8"
-        strokeLinecap="round"
-      />
-    </svg>
-  )
-}
+/** Alias for any legacy import. */
+export const FeaturedServiceDetail = ServiceDetail
