@@ -1,91 +1,111 @@
-/**
- * Decorative device composition: a storefront in a browser window plus a mobile app,
- * the two things Sumic builds most. Skeleton blocks only, so it invents no content.
- */
-export function HeroVisual() {
+import { ArrowUpRightIcon } from 'lucide-react'
+
+import { AppLink } from '@/components/layout/AppLink'
+import { site } from '@/content/site'
+import { useReducedMotionPreference } from '@/hooks/useHeavyEffects'
+
+const leftProducts = site.products.slice(0, 3)
+const rightProducts = site.products.slice(3, 6)
+const cardTops = ['8%', '38%', '68%'] as const
+const floatDelays = ['0s', '0.8s', '1.6s', '0.4s', '1.2s', '2s'] as const
+
+interface ProductCardProps {
+  name: string
+  category: string
+  href: string
+  floatDelay: string
+  reduceMotion: boolean
+}
+
+function ProductCard({ name, category, href, floatDelay, reduceMotion }: ProductCardProps) {
   return (
-    <div
-      aria-hidden="true"
-      className="relative mx-auto w-full max-w-md pb-10 sm:max-w-lg lg:max-w-none"
+    <AppLink
+      href={href}
+      style={reduceMotion ? undefined : { animation: 'heroFloat 6s ease-in-out infinite', animationDelay: floatDelay }}
+      className="flex w-[172px] items-start justify-between gap-2 rounded-2xl border-[1.5px] border-brand-accent bg-brand-surface px-4 py-3 shadow-lg transition-transform duration-200 hover:-translate-y-1"
     >
-      {/* Arc echoing the swoosh in the Sumic logo. */}
-      <svg
-        viewBox="0 0 400 200"
-        fill="none"
-        className="absolute -top-12 -right-4 w-3/4 text-brand-accent sm:-top-16"
-      >
-        <path
-          d="M20 170 C 110 30, 300 -10, 385 95"
-          stroke="currentColor"
-          strokeWidth="10"
-          strokeLinecap="round"
-          opacity="0.9"
-        />
-      </svg>
+      <div className="flex min-w-0 flex-col gap-1">
+        <span className="text-sm font-bold leading-tight text-brand-primary">{name}</span>
+        <span className="w-fit rounded-full bg-brand-accent/15 px-2 py-0.5 text-[10px] font-medium text-brand-accent-ink">
+          {category}
+        </span>
+      </div>
+      <ArrowUpRightIcon aria-hidden="true" className="mt-0.5 size-3.5 shrink-0 text-brand-primary/40" />
+    </AppLink>
+  )
+}
 
-      {/* CSS entrance (animate-rise-in) so it starts on first paint, before JS. */}
-      <div className="relative animate-rise-in overflow-hidden rounded-2xl bg-brand-surface shadow-2xl ring-1 shadow-brand-heading/40 ring-brand-primary-foreground/10 [animation-delay:500ms]">
-        <div className="flex h-9 items-center gap-1.5 border-b border-brand-line bg-brand-surface-muted px-4">
-          <span className="size-2.5 rounded-full bg-brand-line" />
-          <span className="size-2.5 rounded-full bg-brand-line" />
-          <span className="size-2.5 rounded-full bg-brand-line" />
-          <span className="ml-4 h-5 w-1/2 rounded-full bg-brand-surface ring-1 ring-brand-line" />
-        </div>
+export function HeroVisual() {
+  const reduceMotion = useReducedMotionPreference()
 
-        <div className="flex flex-col gap-5 p-5 sm:p-6">
-          <div className="flex items-center justify-between">
-            <span className="h-3 w-16 rounded-sm bg-brand-primary" />
-            <span className="hidden gap-3 sm:flex">
-              <span className="h-2 w-8 rounded-full bg-brand-line" />
-              <span className="h-2 w-8 rounded-full bg-brand-line" />
-              <span className="h-2 w-8 rounded-full bg-brand-line" />
-            </span>
-            <span className="h-5 w-14 rounded-md bg-brand-accent" />
-          </div>
+  return (
+    <>
+      {!reduceMotion && (
+        <style>{`
+          @keyframes heroFloat {
+            0%, 100% { transform: translateY(0); }
+            50%       { transform: translateY(-6px); }
+          }
+        `}</style>
+      )}
 
-          <div className="grid grid-cols-5 items-center gap-4">
-            <div className="col-span-3 flex flex-col gap-2.5">
-              <span className="h-3.5 w-full rounded-sm bg-brand-heading/85" />
-              <span className="h-3.5 w-4/5 rounded-sm bg-brand-heading/85" />
-              <span className="mt-1 h-2 w-full rounded-full bg-brand-line" />
-              <span className="h-2 w-2/3 rounded-full bg-brand-line" />
-              <span className="mt-2 h-6 w-20 rounded-md bg-brand-primary" />
+      {/* ── DESKTOP ── */}
+      <div aria-hidden="true" className="relative hidden lg:block">
+        <div className="relative mx-auto" style={{ width: '300px', height: '420px' }}>
+
+          {leftProducts.map((product, i) => (
+            <div key={product.name} className="absolute right-[calc(100%-28px)] z-10" style={{ top: cardTops[i] }}>
+              <ProductCard name={product.name} category={product.category} href={product.href} floatDelay={floatDelays[i]} reduceMotion={reduceMotion} />
             </div>
-            <div className="col-span-2 aspect-square rounded-xl bg-linear-to-br from-brand-primary to-brand-accent-ink" />
-          </div>
+          ))}
 
-          <div className="grid grid-cols-3 gap-3">
-            {[0, 1, 2].map((item) => (
-              <div key={item} className="flex flex-col gap-2 rounded-lg p-2 ring-1 ring-brand-line">
-                <span className="aspect-4/3 rounded-md bg-brand-surface-muted" />
-                <span className="h-2 w-3/4 rounded-full bg-brand-line" />
-                <span className="h-2 w-1/3 rounded-full bg-brand-accent-ink/70" />
-              </div>
-            ))}
-          </div>
+          <img
+            src="/images/services/hero_image.jpg"
+            alt="Sumic IT Solutions"
+            width={600}
+            height={750}
+            // @ts-expect-error — fetchpriority valid HTML, not yet in React types
+            fetchpriority="high"
+            decoding="async"
+            className="absolute inset-0 h-full w-full rounded-3xl border border-brand-primary-foreground/20 object-cover object-top shadow-2xl shadow-brand-heading/40"
+          />
+
+          {rightProducts.map((product, i) => (
+            <div key={product.name} className="absolute left-[calc(100%-28px)] z-10" style={{ top: cardTops[i] }}>
+              <ProductCard name={product.name} category={product.category} href={product.href} floatDelay={floatDelays[i + 3]} reduceMotion={reduceMotion} />
+            </div>
+          ))}
         </div>
       </div>
 
-      <div className="absolute bottom-0 -left-3 w-[38%] max-w-44 animate-rise-in rounded-[1.75rem] bg-brand-heading p-1.5 shadow-2xl ring-1 shadow-brand-heading/50 ring-brand-primary-foreground/15 [animation-delay:800ms] sm:-left-8">
-        <div className="flex flex-col overflow-hidden rounded-[1.4rem] bg-brand-surface">
-          <div className="flex h-5 items-center justify-center">
-            <span className="h-1.5 w-10 rounded-full bg-brand-heading/80" />
-          </div>
-          <div className="flex flex-col gap-3 px-3 pt-1 pb-3">
-            <span className="h-2.5 w-14 rounded-sm bg-brand-primary" />
-            {[0, 1, 2].map((row) => (
-              <div key={row} className="flex items-center gap-2">
-                <span className="size-8 shrink-0 rounded-md bg-linear-to-br from-brand-primary/80 to-brand-accent-ink/70" />
-                <span className="flex flex-1 flex-col gap-1.5">
-                  <span className="h-1.5 w-full rounded-full bg-brand-line" />
-                  <span className="h-1.5 w-1/2 rounded-full bg-brand-line" />
+      {/* ── MOBILE ── */}
+      <div className="flex flex-col items-center gap-6 lg:hidden">
+        <img
+          src="/images/services/hero_image.jpg"
+          alt="Sumic IT Solutions"
+          width={600}
+          height={750}
+          // @ts-expect-error — fetchpriority valid HTML, not yet in React types
+          fetchpriority="high"
+          decoding="async"
+          className="w-full max-w-sm rounded-3xl border border-brand-primary-foreground/20 object-cover object-top shadow-xl"
+        />
+        <ul className="grid w-full grid-cols-2 gap-3">
+          {site.products.map((product) => (
+            <li key={product.name}>
+              <AppLink
+                href={product.href}
+                className="flex h-full flex-col gap-1.5 rounded-2xl border-[1.5px] border-brand-accent bg-brand-surface px-3 py-2.5 shadow-md"
+              >
+                <span className="text-xs font-bold leading-tight text-brand-primary">{product.name}</span>
+                <span className="w-fit rounded-full bg-brand-accent/15 px-2 py-0.5 text-[10px] font-medium text-brand-accent-ink">
+                  {product.category}
                 </span>
-              </div>
-            ))}
-            <span className="mt-1 h-7 rounded-lg bg-brand-accent" />
-          </div>
-        </div>
+              </AppLink>
+            </li>
+          ))}
+        </ul>
       </div>
-    </div>
+    </>
   )
 }
