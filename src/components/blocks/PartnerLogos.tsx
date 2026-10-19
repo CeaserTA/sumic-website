@@ -1,7 +1,8 @@
 import type { Partner } from '@/content/partners'
 
 /**
- * One partner logo, greyscale until hovered. The marquee mounts near view and loads eagerly
+ * One partner logo, always in the partner's own brand colours (no greyscale or fading, which would
+ * misrepresent their marks and hide them on touch screens). The marquee mounts near view and loads eagerly
  * (lazy images would pop in as the loop slides them in); the static grid loads lazily.
  */
 export function PartnerLogo({
@@ -19,7 +20,7 @@ export function PartnerLogo({
       height={partner.logo.height}
       loading={loading}
       decoding="async"
-      className="h-11 w-auto max-w-44 object-contain opacity-85 grayscale transition-[filter,opacity] duration-300 hover:opacity-100 hover:grayscale-0"
+      className="h-11 w-auto max-w-44 object-contain"
     />
   )
 }

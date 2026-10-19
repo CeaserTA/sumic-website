@@ -79,6 +79,7 @@ Import from `src` using the `@/` alias (`@/components/ui/button`).
 - All copy lives in `src/content/`. Sections receive data through props. No hardcoded strings in JSX.
 - Interface labels and accessible names ("Open menu", "Skip to content") live in `src/content/ui.ts`.
 - Render partners from `confirmedPartners` (it excludes entries whose name is still `TODO:`), never from `partners` directly.
+- Partner logos always show in their own brand colours: no greyscale, fading or colour-on-hover.
 - Content comes from sumicitsolutions.com. **Never invent clients, testimonials, stats or awards.** If something is missing, use a clearly marked `TODO:` placeholder.
 - Company email is **it@sumiconline.com** everywhere (`site.contact.email`); visible text and `mailto:` must match. The one exception is job applications: HR (`hr@`) with CC `careers@`, exactly as the live Careers page states (`applicationEmail` in careers.ts). Build mailto links with `mailtoHref()` (prefilled subjects: "Partnership enquiry", "Application – <role>" / "General application").
 - **Job openings** come only from roles Sumic has published (`jobOpenings` in careers.ts). While the list is empty, Careers shows the "No open roles right now" state with the LinkedIn link.
