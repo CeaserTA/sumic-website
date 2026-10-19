@@ -38,7 +38,7 @@ export function HeroSection({ content }: HeroSectionProps) {
             size="icon-sm"
             onClick={() => setBackgroundPaused((paused) => !paused)}
             aria-pressed={backgroundPaused}
-            className="absolute right-3 bottom-3 z-10 size-8 rounded-full border-brand-primary-foreground/25 bg-brand-heading/30 text-brand-primary-foreground/80 opacity-70 backdrop-blur-sm hover:opacity-100 focus-visible:opacity-100 sm:right-5 sm:bottom-5"
+            className="absolute right-3 bottom-3 z-10 size-8 rounded-full border-brand-primary-foreground/25 bg-brand-heading/30 text-brand-primary-foreground/80 opacity-70 backdrop-blur-sm reduce-transparency:bg-brand-heading reduce-transparency:backdrop-blur-none hover:opacity-100 focus-visible:opacity-100 sm:right-5 sm:bottom-5"
           >
             {backgroundPaused ? (
               <PlayIcon className="size-3.5" />

@@ -3,6 +3,8 @@
 @import 'shadcn/tailwind.css';
 
 @custom-variant dark (&:is(.dark *));
+/* Frosted surfaces (navbar, overlay buttons) turn solid for people who ask for less transparency. */
+@custom-variant reduce-transparency (@media (prefers-reduced-transparency: reduce));
 
 /* Satoshi by Indian Type Foundry (Fontshare), self-hosted under the ITF Free Font License
    (src/assets/fonts/satoshi/LICENSE-FFL.txt). One variable file covers weights 300–900. */
@@ -107,10 +109,12 @@
       opacity: 0;
       transform: translateY(-50px);
     }
+    /* Settles from above without overshooting: a headline that fades in has no momentum to
+       carry past its resting place, so it shouldn't bounce. */
     50% {
       filter: blur(5px);
       opacity: 0.5;
-      transform: translateY(5px);
+      transform: translateY(-5px);
     }
     100% {
       filter: blur(0);
@@ -213,6 +217,16 @@
     /* text-* size utilities read --tw-leading, so every heading size gets 1.05. */
     --tw-leading: 1.05;
   }
+  /* Tracking and leading follow size: display headings stay tight; the smaller h3–h6 (card and
+     panel titles) get less negative tracking and more leading so wrapped lines don't collide. */
+  h3,
+  h4,
+  h5,
+  h6 {
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    --tw-leading: 1.2;
+  }
   :focus-visible {
     @apply outline-2 outline-offset-2 outline-ring;
   }
@@ -246,7 +260,9 @@
   contain-intrinsic-size: auto 900px;
 }
 
-/* Safety net; Motion components also check useReducedMotion(). */
+/* Safety net; Motion components also check useReducedMotion().
+   Reduced motion still gets feedback: movement (transform, translate, scale, layout) becomes
+   instant, while colour and opacity changes keep their timing as gentle cross-fades. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -254,7 +270,8 @@
     animation-duration: 0.01ms !important;
     animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    transition-property: color, background-color, border-color, opacity, box-shadow !important;
+    transition-delay: 0ms !important;
     scroll-behavior: auto !important;
   }
 }

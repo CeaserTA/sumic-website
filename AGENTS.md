@@ -52,6 +52,7 @@ src/
 scripts/prerender.mjs   post-build: prerenders every route to dist/<path>/index.html (+ 404.html, redirect
                         stubs, sitemap.xml)
 docs/redesign-plan.md   site audit, sitemap, redirects, forms and build order for the remaining pages
+docs/apple-design-audit.md  interaction/motion/materials audit (Apple design principles), fixes and open items
 public/brand/           logos and brand imagery (pulled from the live site; brand-kit files will replace them)
 public/brand/partners/  partner logos
 public/brand/products/  real screenshots of Sumic's own products (desktop + phone)
@@ -98,8 +99,10 @@ Import from `src` using the `@/` alias (`@/components/ui/button`).
   - For green text or icons on light surfaces, use `brand-accent-ink`.
   - Focus rings use `ring` (navy). On dark surfaces, set `[--ring:var(--brand-accent)]` on the container so rings turn green.
 - The primary CTA uses `<Button variant="accent">` (green with navy text), a project addition to the shadcn button.
-- Font: **Satoshi** (Indian Type Foundry, ITF Free Font License) for headings and body. It's self-hosted as one variable woff2 file (weights 300–900) in `src/assets/fonts/satoshi/`, with its licence in `LICENSE-FFL.txt`. The licence forbids redistributing the font files, so don't put them in a public repository or font service. Headings: weight 700, letter-spacing -0.02em, line-height 1.05 (set in the base layer; don't override per heading). Body: weight 400, 500 for emphasis. Hero h1 tops out around 76px.
+- Font: **Satoshi** (Indian Type Foundry, ITF Free Font License) for headings and body. It's self-hosted as one variable woff2 file (weights 300–900) in `src/assets/fonts/satoshi/`, with its licence in `LICENSE-FFL.txt`. The licence forbids redistributing the font files, so don't put them in a public repository or font service. Headings: weight 700; tracking and leading follow size: h1/h2 letter-spacing -0.02em, line-height 1.05; h3–h6 -0.01em, 1.2 (set in the base layer; don't override per heading). Body: weight 400, 500 for emphasis. Hero h1 tops out around 76px.
 - Vertical rhythm: sections use `py-12 sm:py-16 lg:py-22` (the `Section` component); keep custom bands on the same scale.
+- Frosted surfaces (`backdrop-blur` over a translucent background) need a solid fallback: `reduce-transparency:` (custom variant in `index.css`) and `contrast-more:` switch them to an opaque background without blur. Separate floating chrome with a soft shadow, not a hard 1px rule.
+- Hover effects promise a click: only interactive elements lift or change on hover. When a whole card reacts to hover, make the whole card the link's hit area (an `after:absolute after:inset-0` on its link).
 - Light mode only for now. Dark mode will override the brand-role and semantic token layers in `src/index.css`; don't hardcode light-only colours in components.
 
 ### Forms
@@ -125,7 +128,10 @@ Import from `src` using the `@/` alias (`@/components/ui/button`).
 - Use Motion for scroll reveals and micro-interactions, via the lightweight `m.*` components (`import { m } from 'motion/react'`). There is no app-level provider: wrap animated components in `<MotionScope>` (`LazyMotion strict` + `MotionConfig reducedMotion="user"`), as Reveal and ProcessTimeline do, so pages without animation never load Motion. A full `motion.*` component throws in strict mode.
 - Keep Motion off the critical path: no Motion in the navbar, hero or layout. Scroll-position state uses `useScrolledPast(px)` (passive listener), not Motion's `useScroll`; simple fades use CSS transitions.
 - Above-the-fold entrance animations (hero headline, hero visual) use CSS keyframes (`animate-blur-in`, `animate-rise-in` in `index.css`) so they start on first paint of the prerendered HTML.
-- Every animation respects `prefers-reduced-motion` (`MotionConfig reducedMotion="user"` for Motion, the global CSS safety net for CSS animations).
+- Every animation respects `prefers-reduced-motion` (`MotionConfig reducedMotion="user"` for Motion, the global CSS safety net for CSS animations). Reduced motion still gets feedback: the safety net makes movement instant but keeps colour and opacity transitions.
+- Feedback starts on press: interactive cards and buttons respond on `:active` (settle and `scale-[0.97]`, ~100ms), not only on hover or release. Transitions that answer a click start immediately (no delay) with an ease-out.
+- No bounce or overshoot unless the user's gesture carried momentum (a flick or a drag release). No idle looping motion on content (floating cards and the like).
+- Carousels shown on touch screens accept swipes; decide on release from distance or flick speed.
 - Continuous motion longer than 5 seconds (hero background, logo marquee) needs a visible pause control (WCAG 2.2.2).
 - Heavy effects (WebGL/canvas backgrounds) are lazy-loaded (`React.lazy` + `Suspense`). At most one heavy effect per viewport.
 

@@ -43,8 +43,11 @@ export function Navbar({ links, cta, overlayTone = 'light' }: NavbarProps) {
     <header
       className={cn(
         'fixed inset-x-0 top-0 z-40 border-b transition-[background-color,border-color,box-shadow] duration-300',
+        // Solid state: a frosted layer that content scrolls under, separated by a soft shadow
+        // rather than a hard rule. Reduced transparency and more contrast get an opaque bar,
+        // and more contrast also gets a visible edge.
         solid
-          ? 'border-brand-line bg-background/85 shadow-[0_1px_12px_-4px] shadow-brand-primary/15 backdrop-blur-md'
+          ? 'border-transparent bg-background/85 shadow-[0_1px_12px_-4px] shadow-brand-primary/15 backdrop-blur-md backdrop-saturate-150 reduce-transparency:bg-background reduce-transparency:backdrop-blur-none contrast-more:border-brand-primary/40 contrast-more:bg-background contrast-more:backdrop-blur-none'
           : 'border-transparent bg-transparent',
         dark && 'text-brand-primary-foreground [--ring:var(--brand-accent)]',
       )}

@@ -2,6 +2,7 @@ import {
   useEffect,
   useId,
   useRef,
+  useState,
   type KeyboardEvent,
 } from 'react'
 import { ArrowRightIcon, CheckIcon, ChevronDownIcon, type LucideIcon } from 'lucide-react'
@@ -38,25 +39,38 @@ export function ServicesPanel({
 }: ServicesPanelProps) {
   const reduceMotion = useReducedMotionPreference()
   const panelId = useId()
+  // Mobile accordion only: the active service can be folded away (the desktop tabs always show
+  // one). Remembering which one was folded means picking any other service opens normally.
+  const [collapsedAnchor, setCollapsedAnchor] = useState<string | null>(null)
 
   const activeIndex = Math.max(
     0,
     items.findIndex((item) => item.service.anchor === activeAnchor),
   )
 
+  const tabId = (anchor: string) => `${panelId}-tab-${anchor}`
+
+  // Roving tabindex: the selection and the keyboard focus move together.
+  function selectTab(index: number) {
+    const anchor = items[index]?.service.anchor
+    if (!anchor) return
+    onSelect(anchor)
+    document.getElementById(tabId(anchor))?.focus()
+  }
+
   function handleKeyDown(e: KeyboardEvent<HTMLUListElement>) {
     if (e.key === 'ArrowDown') {
       e.preventDefault()
-      onSelect(items[(activeIndex + 1) % items.length].service.anchor)
+      selectTab((activeIndex + 1) % items.length)
     } else if (e.key === 'ArrowUp') {
       e.preventDefault()
-      onSelect(items[(activeIndex - 1 + items.length) % items.length].service.anchor)
+      selectTab((activeIndex - 1 + items.length) % items.length)
     } else if (e.key === 'Home') {
       e.preventDefault()
-      onSelect(items[0].service.anchor)
+      selectTab(0)
     } else if (e.key === 'End') {
       e.preventDefault()
-      onSelect(items[items.length - 1].service.anchor)
+      selectTab(items.length - 1)
     }
   }
 
@@ -85,7 +99,6 @@ export function ServicesPanel({
           {items.map((item, i) => {
             const Icon = item.icon
             const isCurrent = item.service.anchor === activeAnchor
-            const tabId = `${panelId}-tab-${item.service.anchor}`
             const tabPanelId = `${panelId}-panel`
             return (
               <li
@@ -97,7 +110,7 @@ export function ServicesPanel({
                 )}
               >
                 <button
-                  id={tabId}
+                  id={tabId(item.service.anchor)}
                   role="tab"
                   aria-selected={isCurrent}
                   aria-controls={tabPanelId}
@@ -105,11 +118,11 @@ export function ServicesPanel({
                   onClick={() => onSelect(item.service.anchor)}
                   className={cn(
                     'flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-left text-sm',
+                    // Navy focus outline from the base layer (green fails 3:1 on this light surface).
                     'transition-colors duration-150',
-                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent',
                     isCurrent
                       ? 'bg-brand-accent/12 font-semibold text-brand-primary'
-                      : 'text-brand-text hover:bg-brand-accent/8 hover:text-brand-heading',
+                      : 'text-brand-text hover:bg-brand-accent/8 hover:text-brand-heading active:bg-brand-accent/15 active:duration-0',
                   )}
                 >
                   <span className="w-5 shrink-0 font-mono text-[10px] text-brand-text/35">
@@ -144,7 +157,7 @@ export function ServicesPanel({
         <div
           id={`${panelId}-panel`}
           role="tabpanel"
-          aria-labelledby={`${panelId}-tab-${items[activeIndex].service.anchor}`}
+          aria-labelledby={tabId(activeAnchor)}
           className="relative overflow-hidden rounded-2xl"
         >
           {items.map((item) => {
@@ -171,14 +184,15 @@ export function ServicesPanel({
           })}
         </div>
 
-        {/* RIGHT: description — all rendered, inactive hidden, fades on switch */}
+        {/* RIGHT: description — all rendered, inactive hidden, fades on switch.
+            `inert` (not just aria-hidden) keeps the hidden panels' links out of the tab order. */}
         <div className="relative min-h-0">
           {items.map((item) => {
             const isCurrent = item.service.anchor === activeAnchor
             return (
               <div
                 key={item.service.anchor}
-                aria-hidden={!isCurrent}
+                inert={!isCurrent}
                 className={cn(
                   isCurrent ? 'block' : 'pointer-events-none absolute inset-0',
                   reduceMotion
@@ -196,22 +210,28 @@ export function ServicesPanel({
 
       {/* ══ MOBILE (<lg): accordion ════════════════════════════════════════ */}
       <div className="flex flex-col divide-y divide-brand-line overflow-hidden rounded-2xl border border-brand-line lg:hidden">
-        {items.map((item, i) => (
-          <AccordionItem
-            key={item.service.anchor}
-            item={item}
-            index={i}
-            isOpen={item.service.anchor === activeAnchor}
-            includedTitle={includedTitle}
-            onToggle={() =>
-              onSelect(
-                item.service.anchor === activeAnchor
-                  ? items[0].service.anchor
-                  : item.service.anchor,
-              )
-            }
-          />
-        ))}
+        {items.map((item, i) => {
+          const isOpen = item.service.anchor === activeAnchor && collapsedAnchor !== activeAnchor
+          return (
+            <AccordionItem
+              key={item.service.anchor}
+              item={item}
+              index={i}
+              isOpen={isOpen}
+              includedTitle={includedTitle}
+              reduceMotion={reduceMotion}
+              // Tapping the open item closes it in place; it never jumps to another service.
+              onToggle={() => {
+                if (isOpen) {
+                  setCollapsedAnchor(item.service.anchor)
+                } else {
+                  setCollapsedAnchor(null)
+                  onSelect(item.service.anchor)
+                }
+              }}
+            />
+          )
+        })}
       </div>
     </section>
   )
@@ -260,7 +280,7 @@ function ServiceContent({
         </p>
       ))}
 
-      <p className="mt-6 text-xs font-semibold uppercase tracking-widest text-brand-text/50">
+      <p className="mt-6 text-xs font-semibold uppercase tracking-widest text-brand-text">
         {includedTitle}
       </p>
       <ul className="mt-3 grid grid-cols-2 gap-x-5 gap-y-2">
@@ -293,12 +313,14 @@ function AccordionItem({
   index,
   isOpen,
   includedTitle,
+  reduceMotion,
   onToggle,
 }: {
   item: ServiceItem
   index: number
   isOpen: boolean
   includedTitle: string
+  reduceMotion: boolean
   onToggle: () => void
 }) {
   const Icon = item.icon
@@ -310,10 +332,10 @@ function AccordionItem({
     if (isOpen && ref.current) {
       const rect = ref.current.getBoundingClientRect()
       if (rect.top < 80 || rect.top > window.innerHeight * 0.8) {
-        ref.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+        ref.current.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'nearest' })
       }
     }
-  }, [isOpen])
+  }, [isOpen, reduceMotion])
 
   return (
     <div ref={ref} className="bg-brand-surface">
@@ -324,10 +346,11 @@ function AccordionItem({
         onClick={onToggle}
         className={cn(
           'flex w-full items-center gap-3 px-4 py-3.5 text-left text-sm',
-          'transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-accent',
+          // Inset navy outline: the rounded list clips anything drawn outside the row.
+          'transition-colors focus-visible:-outline-offset-2',
           isOpen
             ? 'bg-brand-accent/8 font-semibold text-brand-primary'
-            : 'text-brand-text hover:bg-brand-accent/5',
+            : 'text-brand-text hover:bg-brand-accent/5 active:bg-brand-accent/12 active:duration-0',
         )}
       >
         <span className="w-6 shrink-0 font-mono text-[10px] text-brand-text/35">
@@ -359,7 +382,9 @@ function AccordionItem({
         id={regionId}
         role="region"
         aria-labelledby={headingId}
-        className="grid transition-[grid-template-rows] duration-300"
+        // Closed panels are only squeezed to 0 height, so `inert` keeps their links unfocusable.
+        inert={!isOpen}
+        className="grid transition-[grid-template-rows] duration-300 ease-out"
         style={{ gridTemplateRows: isOpen ? '1fr' : '0fr' }}
       >
         <div className="overflow-hidden">

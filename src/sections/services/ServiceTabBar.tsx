@@ -84,7 +84,8 @@ function ServiceCard({
       onClick={(e) => onClick(e, id)}
       className={cn(
         'flex w-full flex-col items-center gap-2 rounded-2xl bg-brand-surface px-3 py-3 text-center',
-        'border shadow-xl transition-all duration-200 hover:-translate-y-1',
+        // Lifts on hover, settles the instant it's pressed: feedback starts on pointer-down.
+        'border shadow-xl transition-[translate,scale,border-color,box-shadow] duration-200 ease-out hover:-translate-y-1 active:translate-y-0 active:scale-[0.97] active:duration-100',
         active
           ? 'border-brand-accent ring-2 ring-brand-accent'
           : 'border-brand-line hover:border-brand-accent',

@@ -6,8 +6,9 @@ import type { Stat } from '@/content/home'
 import { useReducedMotionPreference } from '@/hooks/useHeavyEffects'
 
 interface StatsRowProps {
-  eyebrow: string
-  title: string
+  /** Leave out both when the surrounding Section already shows the heading (About page). */
+  eyebrow?: string
+  title?: string
   stats: readonly Stat[]
 }
 
@@ -36,7 +37,7 @@ function RadialRing({ fill, animated, delay }: RingProps) {
     if (!el) return
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (!entry.isIntersecting) return
+        if (!entry?.isIntersecting) return
         observer.disconnect()
         const id = setTimeout(() => setProgress(fill), delay)
         return () => clearTimeout(id)
@@ -68,22 +69,27 @@ function RadialRing({ fill, animated, delay }: RingProps) {
 }
 
 export function StatsRow({ eyebrow, title, stats }: StatsRowProps) {
-  if (stats.length === 0) return null
+  // Hooks run before any early return (rules of hooks).
   const reduceMotion = useReducedMotionPreference()
+  if (stats.length === 0) return null
 
   return (
     <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:gap-12">
 
-      {/* Heading */}
-      <div className="flex flex-col gap-2 lg:w-72 lg:shrink-0">
-        <p className="font-medium text-brand-accent-ink">{eyebrow}</p>
-        <h2 className="text-2xl font-semibold leading-snug text-brand-heading sm:text-3xl">
-          {title}
-        </h2>
-      </div>
+      {title && (
+        <>
+          {/* Heading */}
+          <div className="flex flex-col gap-2 lg:w-72 lg:shrink-0">
+            {eyebrow && <p className="font-medium text-brand-accent-ink">{eyebrow}</p>}
+            <h2 className="text-2xl font-semibold leading-snug text-brand-heading sm:text-3xl">
+              {title}
+            </h2>
+          </div>
 
-      {/* Divider — desktop only */}
-      <div aria-hidden="true" className="hidden h-20 w-px shrink-0 bg-brand-line lg:block" />
+          {/* Divider — desktop only */}
+          <div aria-hidden="true" className="hidden h-20 w-px shrink-0 bg-brand-line lg:block" />
+        </>
+      )}
 
       {/* 4 rings in a row */}
       <dl className="grid grid-cols-2 gap-6 sm:grid-cols-4 lg:flex lg:flex-1 lg:justify-around lg:gap-0">
@@ -91,7 +97,7 @@ export function StatsRow({ eyebrow, title, stats }: StatsRowProps) {
           <Reveal key={stat.label} index={index} className="flex flex-col items-center gap-2">
             <div className="relative flex items-center justify-center">
               <RadialRing
-                fill={ringFills[index % ringFills.length]}
+                fill={ringFills[index % ringFills.length] ?? 0}
                 animated={!reduceMotion}
                 delay={index * 150}
               />

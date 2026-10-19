@@ -1,4 +1,13 @@
-import { useEffect, useId, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react'
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type CSSProperties,
+  type KeyboardEvent,
+  type MouseEvent,
+  type PointerEvent,
+} from 'react'
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
 
 import { TeamCard } from '@/components/blocks/team/TeamCard'
@@ -43,7 +52,13 @@ export function TeamCarousel({ people, startIndex = 0 }: TeamCarouselProps) {
 
 /* ------------------------------------------------------------------ Coverflow (md+) */
 
-const EASE = 'cubic-bezier(0.56, 0.12, 0.12, 0.98)'
+// Ease-out: the cards start moving at full speed the moment you click, then settle.
+const EASE = 'cubic-bezier(0.22, 1, 0.36, 1)'
+
+/** A swipe commits past this distance, or sooner when flicked faster than FLICK_SPEED. */
+const SWIPE_DISTANCE = 40
+const SWIPE_SLOP = 10
+const FLICK_SPEED = 0.3 // px per ms
 
 /** Signed distance from the front card, wrapping around (…, -2, -1, 0, 1, 2, …). */
 function offsetFrom(index: number, current: number, total: number): number {
@@ -53,8 +68,8 @@ function offsetFrom(index: number, current: number, total: number): number {
 
 /**
  * The card's place in the fan: the front card is flat; the next ones turn in 3D towards it,
- * shrink and tuck behind; the rest wait out of sight. Later cards start moving slightly later,
- * so the fan unfolds.
+ * shrink and tuck behind; the rest wait out of sight. The front card and its neighbours respond
+ * at once; only the outer cards start slightly later, so the fan still unfolds.
  */
 function coverflowStyle(offset: number): CSSProperties {
   const distance = Math.abs(offset)
@@ -67,7 +82,7 @@ function coverflowStyle(offset: number): CSSProperties {
         : distance === 2
           ? { x: 98, turn: 40, scale: 0.65 }
           : { x: 110, turn: 20, scale: 0.5 }
-  const delay = distance <= 1 ? 60 : distance === 2 ? 90 : 115
+  const delay = distance <= 1 ? 0 : distance === 2 ? 30 : 55
   return {
     transform: `perspective(800px) translateX(${side * place.x}%) rotateY(${-side * place.turn}deg) scale(${place.scale})`,
     opacity: distance > 2 ? 0 : 1,
@@ -99,6 +114,38 @@ function Coverflow({ people, startIndex }: Required<TeamCarouselProps>) {
     event.preventDefault()
   }
 
+  // Swipe (tablets are md+ too): decide on release from the distance or the flick's speed, so a
+  // short fast flick counts as much as a long slow drag. Vertical page scrolling is untouched.
+  const swipeStart = useRef<{ x: number; y: number; time: number } | null>(null)
+  const swiped = useRef(false)
+
+  function handlePointerDown(event: PointerEvent<HTMLDivElement>) {
+    if (!event.isPrimary || event.button !== 0) return
+    swipeStart.current = { x: event.clientX, y: event.clientY, time: event.timeStamp }
+    swiped.current = false
+  }
+
+  function handlePointerUp(event: PointerEvent<HTMLDivElement>) {
+    const start = swipeStart.current
+    swipeStart.current = null
+    if (!start) return
+    const dx = event.clientX - start.x
+    const dy = event.clientY - start.y
+    if (Math.abs(dx) < SWIPE_SLOP || Math.abs(dx) < Math.abs(dy)) return
+    const speed = Math.abs(dx) / Math.max(1, event.timeStamp - start.time)
+    if (Math.abs(dx) < SWIPE_DISTANCE && speed < FLICK_SPEED) return
+    swiped.current = true
+    show(current + (dx < 0 ? 1 : -1))
+  }
+
+  // A swipe that ends over a side card must not also count as a click on it.
+  function handleClickCapture(event: MouseEvent<HTMLDivElement>) {
+    if (!swiped.current) return
+    swiped.current = false
+    event.stopPropagation()
+    event.preventDefault()
+  }
+
   const front = people[current]
 
   return (
@@ -112,7 +159,14 @@ function Coverflow({ people, startIndex }: Required<TeamCarouselProps>) {
         ))}
       </ul>
 
-      <div aria-hidden="true" className="grid w-full overflow-x-clip py-2">
+      <div
+        aria-hidden="true"
+        onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={() => (swipeStart.current = null)}
+        onClickCapture={handleClickCapture}
+        className="grid w-full touch-pan-y overflow-x-clip py-2 select-none"
+      >
         {people.map((person, index) => {
           const offset = offsetFrom(index, current, total)
           const distance = Math.abs(offset)

@@ -26,7 +26,7 @@ export function HeroServicesStrip() {
                     <span className="text-sm font-semibold leading-tight text-brand-primary-foreground">
                       {service.shortTitle ?? service.title}
                     </span>
-                    <span className="text-xs leading-snug text-brand-primary-foreground/50">
+                    <span className="text-xs leading-snug text-brand-primary-foreground/70">
                       {stripDescription(service.description)}
                     </span>
                   </span>

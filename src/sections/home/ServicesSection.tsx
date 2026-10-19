@@ -58,12 +58,15 @@ export function ServicesSection({ content, services }: ServicesSectionProps) {
                     <div className={`h-px flex-1 ${isLast ? 'bg-transparent' : 'bg-transparent'}`} />
                   </div>
 
-                  {/* Card */}
+                  {/* Card: the whole card is the "Learn more" link's hit area (its ::after
+                      covers the card), so the hover state promises exactly what a click does. */}
                   <div
                     className={`
-                      group flex h-full flex-col gap-3 rounded-2xl border border-brand-line
-                      bg-brand-surface p-4 transition-all
+                      group relative flex h-full flex-col gap-3 rounded-2xl border border-brand-line
+                      bg-brand-surface p-4 transition-[border-color,box-shadow,scale] duration-200 ease-out
                       hover:border-brand-accent/40 hover:shadow-md hover:shadow-brand-primary/8
+                      has-[a:active]:scale-[0.98] has-[a:active]:duration-100
+                      has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-offset-2 has-[a:focus-visible]:outline-ring
                       lg:mx-2 lg:rounded-xl
                     `}
                   >
@@ -85,7 +88,7 @@ export function ServicesSection({ content, services }: ServicesSectionProps) {
                     {/* Learn more */}
                     <AppLink
                       href={service.href}
-                      className="mt-auto inline-flex items-center gap-1 text-xs font-medium text-brand-accent-ink underline-offset-4 transition-colors hover:underline"
+                      className="mt-auto inline-flex items-center gap-1 text-xs font-medium text-brand-accent-ink underline-offset-4 transition-colors outline-none group-hover:underline after:absolute after:inset-0 after:rounded-[inherit] after:content-['']"
                     >
                       {content.learnMore}
                       <span className="sr-only">: {service.shortTitle ?? service.title}</span>

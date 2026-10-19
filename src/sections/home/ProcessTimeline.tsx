@@ -70,11 +70,11 @@ export function ProcessTimeline({ title, intro, steps, headingLevel = 3 }: Proce
             <Reveal key={step.title} as="li" index={index}>
               {/*
                 Navy card with a large faded ordinal watermark.
-                Hover: slight lift + green top border appears.
                 Completely distinct from the white service cards and
                 the muted-bg stat rings elsewhere on the page.
+                No hover lift: the steps aren't links, and a lift promises a click.
               */}
-              <div className="group relative h-full overflow-hidden rounded-2xl bg-brand-primary p-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand-primary/20 hover:ring-1 hover:ring-brand-accent/40 [--ring:var(--brand-accent)]">
+              <div className="relative h-full overflow-hidden rounded-2xl bg-brand-primary p-4 [--ring:var(--brand-accent)]">
 
                 {/* Large faded step number watermark — bottom-right */}
                 <span
@@ -89,7 +89,7 @@ export function ProcessTimeline({ title, intro, steps, headingLevel = 3 }: Proce
                   {index + 1}
                 </span>
 
-                <Step className="mb-1.5 text-sm font-semibold text-brand-primary-foreground transition-colors group-hover:text-brand-accent">
+                <Step className="mb-1.5 text-sm font-semibold text-brand-primary-foreground">
                   {step.title}
                 </Step>
 

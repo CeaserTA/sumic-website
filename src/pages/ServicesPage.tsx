@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useState } from 'react'
+import { useCallback, useId, useSyncExternalStore } from 'react'
 import { ArrowUpRightIcon, ClipboardListIcon } from 'lucide-react'
 
 import { CtaBand } from '@/components/blocks/CtaBand'
@@ -21,12 +21,28 @@ import { ServicesPanel } from '@/sections/services/ServicesPanel'
 
 // Anchors the hash can target
 const ANCHORS = services.map((s) => s.anchor)
-const DEFAULT_ANCHOR = ANCHORS[0]
+const DEFAULT_ANCHOR = ANCHORS[0] ?? ''
 
 function anchorFromHash(hash: string): string {
   const id = hash.replace('#', '')
   return ANCHORS.includes(id) ? id : DEFAULT_ANCHOR
 }
+
+// history.replaceState doesn't fire `hashchange`, so selections announce themselves with this.
+const SELECT_EVENT = 'services:select'
+
+function subscribeToHash(onChange: () => void) {
+  window.addEventListener('hashchange', onChange)
+  window.addEventListener(SELECT_EVENT, onChange)
+  return () => {
+    window.removeEventListener('hashchange', onChange)
+    window.removeEventListener(SELECT_EVENT, onChange)
+  }
+}
+
+const readHashAnchor = () => anchorFromHash(window.location.hash)
+// Prerender and hydration show the first service; the client then syncs to the hash.
+const readServerAnchor = () => DEFAULT_ANCHOR
 
 const tabItems = services.map((service) => ({
   id: service.anchor,
@@ -46,24 +62,13 @@ export function ServicesPage() {
   const titleId = useId()
 
   // ── Hash-driven active service ───────────────────────────────────────────
-  // On the server (prerender) there is no window, so start with the default.
-  const [activeAnchor, setActiveAnchor] = useState<string>(DEFAULT_ANCHOR)
-
-  useEffect(() => {
-    // Initialise from the current hash on mount
-    setActiveAnchor(anchorFromHash(window.location.hash))
-
-    function onHashChange() {
-      setActiveAnchor(anchorFromHash(window.location.hash))
-    }
-    window.addEventListener('hashchange', onHashChange)
-    return () => window.removeEventListener('hashchange', onHashChange)
-  }, [])
+  // The URL hash is the source of truth (no setState in an effect).
+  const activeAnchor = useSyncExternalStore(subscribeToHash, readHashAnchor, readServerAnchor)
 
   const handleSelect = useCallback((anchor: string) => {
-    setActiveAnchor(anchor)
     // Update the URL hash without a full navigation
     history.replaceState(null, '', `#${anchor}`)
+    window.dispatchEvent(new Event(SELECT_EVENT))
   }, [])
 
   // ── Panel items ──────────────────────────────────────────────────────────
