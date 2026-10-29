@@ -12,12 +12,14 @@ import {
   CookiesPolicyPage,
   FounderPage,
   GovernancePage,
+  MobileAppChecklistPage,
   PartnershipsPage,
   PlannedPage,
   PrivacyPolicyPage,
   ServicesPage,
   SumicMeaningPage,
   TermsOfUsePage,
+  WebsiteChecklistPage,
 } from '@/routes/pageModules'
 
 /** The element for each built inner page; pages not listed render PlannedPage. */
@@ -45,6 +47,10 @@ function pageElement(id: PageId): ReactNode {
       return <CareersPage />
     case 'contact':
       return <ContactPage />
+    case 'checklist-website':
+      return <WebsiteChecklistPage />
+    case 'checklist-mobile-app':
+      return <MobileAppChecklistPage />
     default:
       return <PlannedPage pageId={id} />
   }

@@ -1,5 +1,5 @@
 import { useCallback, useId, useSyncExternalStore } from 'react'
-import { ArrowUpRightIcon, ClipboardListIcon } from 'lucide-react'
+import { ArrowRightIcon, ClipboardListIcon } from 'lucide-react'
 
 import { CtaBand } from '@/components/blocks/CtaBand'
 import { serviceIcons } from '@/components/icons/serviceIcons'
@@ -8,8 +8,12 @@ import { Container } from '@/components/layout/Container'
 import { Reveal } from '@/components/motion/Reveal'
 import { Button } from '@/components/ui/button'
 import {
-  Breadcrumb, BreadcrumbItem, BreadcrumbLink,
-  BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator,
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
 import { homeCta } from '@/content/home'
 import { pageById } from '@/content/pages'
@@ -107,7 +111,12 @@ export function ServicesPage() {
           fill="none"
           className="absolute -right-10 bottom-0 -z-10 hidden w-[28rem] text-brand-accent opacity-40 lg:block"
         >
-          <path d="M20 190 C 110 50, 300 10, 390 110" stroke="currentColor" strokeWidth="8" strokeLinecap="round" />
+          <path
+            d="M20 190 C 110 50, 300 10, 390 110"
+            stroke="currentColor"
+            strokeWidth="8"
+            strokeLinecap="round"
+          />
         </svg>
         <Container className="pt-28 pb-14 sm:pt-32 sm:pb-16 lg:pt-36 lg:pb-16">
           <Breadcrumb aria-label={ui.breadcrumb.label}>
@@ -119,7 +128,9 @@ export function ServicesPage() {
               </BreadcrumbItem>
               <BreadcrumbSeparator className="text-brand-primary-foreground/50" />
               <BreadcrumbItem>
-                <BreadcrumbPage className="text-brand-primary-foreground">{page.breadcrumb}</BreadcrumbPage>
+                <BreadcrumbPage className="text-brand-primary-foreground">
+                  {page.breadcrumb}
+                </BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
@@ -171,7 +182,6 @@ export function ServicesPage() {
       <div className="bg-brand-surface-muted py-16 lg:py-20">
         <Container>
           <div className="mx-auto max-w-5xl rounded-3xl border border-brand-line bg-brand-surface p-8 lg:p-12">
-
             <div className="flex flex-col items-center gap-3 text-center">
               <span aria-hidden="true" className="h-1 w-10 rounded-full bg-brand-accent-ink" />
               <h2 className="text-2xl font-semibold sm:text-3xl">{promise.title}</h2>
@@ -199,17 +209,16 @@ export function ServicesPage() {
                     <h4 className="text-lg font-semibold">{form.title}</h4>
                     <p className="text-sm text-pretty text-brand-text">{form.description}</p>
                     <Button asChild size="default" className="mt-auto h-10 w-fit px-5 text-sm">
-                      <a href={form.href} target="_blank" rel="noopener noreferrer">
+                      <AppLink href={form.href}>
                         {checklists.linkLabel}
-                        <span className="sr-only">: {form.title} {ui.nav.opensInNewTab}</span>
-                        <ArrowUpRightIcon data-icon="inline-end" aria-hidden="true" />
-                      </a>
+                        <span className="sr-only">: {form.title}</span>
+                        <ArrowRightIcon data-icon="inline-end" aria-hidden="true" />
+                      </AppLink>
                     </Button>
                   </Reveal>
                 ))}
               </ul>
             </div>
-
           </div>
         </Container>
       </div>

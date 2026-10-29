@@ -17,6 +17,8 @@ export type PageId =
   | 'partnerships'
   | 'careers'
   | 'contact'
+  | 'checklist-website'
+  | 'checklist-mobile-app'
   | 'privacy-policy'
   | 'cookies-policy'
   | 'terms-of-use'
@@ -152,6 +154,36 @@ export const pages: readonly PageMeta[] = [
     hero: {
       title: 'Contact us',
       intro: 'Request a free consultation, or reach us directly.',
+    },
+  },
+  // Client checklist forms (replace the Google Forms; see src/content/checklists/). Hero intro is
+  // each Google Form's own opening line.
+  {
+    id: 'checklist-website',
+    path: '/checklists/website/',
+    title: 'Website creation client checklist',
+    description:
+      'Planning a website with Sumic IT Solutions? Tell us about your business, branding, features, domain, timeline and budget in a few minutes.',
+    breadcrumb: 'Website checklist',
+    status: 'built',
+    hero: {
+      title: 'Website creation client checklist',
+      intro:
+        'This form is designed to help us gather all the essential details we need to create a professional, functional, and visually appealing website tailored to your business needs.',
+    },
+  },
+  {
+    id: 'checklist-mobile-app',
+    path: '/checklists/mobile-app/',
+    title: 'Mobile app client checklist',
+    description:
+      'Planning a mobile app with Sumic IT Solutions? Share your goals, features, users, budget and timelines so we can prepare a tailored proposal.',
+    breadcrumb: 'Mobile app checklist',
+    status: 'built',
+    hero: {
+      title: 'Mobile app client checklist',
+      intro:
+        'This form is designed to help us understand your mobile application development needs in detail, from your project goals and desired features to your target users, budget, and timelines.',
     },
   },
   {

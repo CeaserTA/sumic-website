@@ -102,6 +102,8 @@
      without waiting for JS (keeps LCP early). */
   --animate-blur-in: blur-in 0.6s linear both;
   --animate-rise-in: rise-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  /* Checklist form steps: a short settle, no overshoot. Movement is instant under reduced motion. */
+  --animate-step-in: step-in 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
 
   @keyframes blur-in {
     0% {
@@ -118,6 +120,17 @@
     }
     100% {
       filter: blur(0);
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes step-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
       opacity: 1;
       transform: none;
     }
@@ -258,6 +271,13 @@
 @utility defer-render {
   content-visibility: auto;
   contain-intrinsic-size: auto 900px;
+}
+
+/* Checklist forms: on phones the Back/Next bar is sticky, so keep focused fields clear of it. */
+@media (width < 40rem) {
+  html:has([data-checklist-actions]) {
+    scroll-padding-bottom: 6rem;
+  }
 }
 
 /* Safety net; Motion components also check useReducedMotion().

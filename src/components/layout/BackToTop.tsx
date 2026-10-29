@@ -31,6 +31,8 @@ export function BackToTop() {
       onClick={handleClick}
       className={cn(
         'fixed right-4 bottom-4 z-30 size-11 rounded-full text-brand-primary shadow-lg shadow-brand-primary/15 transition-[opacity,translate,visibility] duration-300 sm:right-6 sm:bottom-6',
+        // Phones: sit above the checklist form's sticky Back/Next bar.
+        'max-sm:[body:has([data-checklist-actions])_&]:bottom-24',
         visible ? 'visible translate-y-0 opacity-100' : 'invisible translate-y-3 opacity-0',
       )}
     >

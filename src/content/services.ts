@@ -68,6 +68,8 @@ export const services: readonly Service[] = [
   },
 ]
 
+import { pageById } from '@/content/pages'
+
 export interface ChecklistForm {
   id: 'website' | 'mobile-app'
   title: string
@@ -78,8 +80,11 @@ export interface ChecklistForm {
 }
 
 /**
- * The two client checklist forms (Google Forms). Source: /services/ "Client Checklist Form".
- * Live wording, tightened in the descriptions.
+ * The two client checklist forms. Source: /services/ "Client Checklist Form".
+ * Live wording, tightened in the descriptions. They were Google Forms and are now our own pages
+ * (src/content/checklists/); the old forms, for reference:
+ * - Website: https://forms.gle/tKaBT39AWJqJDHb98
+ * - Mobile app: https://forms.gle/bmbxCA1CLruqx9fG6
  */
 export const checklistForms: readonly ChecklistForm[] = [
   {
@@ -93,7 +98,7 @@ export const checklistForms: readonly ChecklistForm[] = [
      *  organization and achieves its goals." */
     description:
       'Gives us the details we need to create a professional, functional and visually appealing website for your business. Your answers guide our planning, design, development and branding, so the site truly represents your organization and achieves its goals.',
-    href: 'https://forms.gle/tKaBT39AWJqJDHb98',
+    href: pageById('checklist-website').path,
   },
   {
     id: 'mobile-app',
@@ -105,6 +110,6 @@ export const checklistForms: readonly ChecklistForm[] = [
      *  develop a solution that truly reflects your vision and business goals." */
     description:
       'Helps us understand your mobile app in detail: project goals, desired features, target users, budget and timelines. The more you share, the better the solution reflects your vision and business goals.',
-    href: 'https://forms.gle/bmbxCA1CLruqx9fG6',
+    href: pageById('checklist-mobile-app').path,
   },
 ]

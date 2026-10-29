@@ -1,0 +1,63 @@
+/** Interface copy shared by both checklist forms (labels, errors, states). */
+export const checklistCopy = {
+  aboutTitle: 'About this form',
+  requiredNote: 'Questions marked * are required.',
+  step: (current: number, total: number) => `Step ${current} of ${total}`,
+  reviewTitle: 'Review your answers',
+  reviewIntro: 'Check your answers before you submit. Use Edit to change a section.',
+  back: 'Back',
+  next: 'Next',
+  toReview: 'Review answers',
+  backToReview: 'Back to review',
+  submit: 'Submit checklist',
+  submitting: 'Submitting…',
+  edit: 'Edit',
+  editSection: (title: string) => `Edit ${title}`,
+  notAnswered: 'Not answered',
+  confirmed: 'Yes',
+  specifyLabel: 'Please specify',
+  specifyFor: (option: string) => `${option}: please specify`,
+  draft: {
+    restored: 'Draft restored',
+    restoredText: 'We kept your answers from last time on this device.',
+    restoredFiles: 'Attached files aren’t saved in drafts, so add them again.',
+    startOver: 'Start over',
+    cleared: 'Form cleared. Starting again from step 1.',
+  },
+  file: {
+    choose: 'Choose file',
+    accepted: 'Accepted:',
+    upTo: (mb: number) => `up to ${mb} MB`,
+    remove: 'Remove file',
+    removeNamed: (name: string) => `Remove ${name}`,
+    selected: 'Selected file:',
+  },
+  errors: {
+    required: 'This is a required question. Answer it to continue.',
+    requiredChoice: 'Choose an answer.',
+    requiredMulti: 'Choose at least one option.',
+    requiredConfirm: 'Tick the box to confirm.',
+    email: 'Enter an email address like name@example.com.',
+    emails: 'Enter email addresses like name@example.com, separated by commas.',
+    phone: 'Enter a phone number, for example +256 700 000 000.',
+    url: 'Enter a web address, for example example.com.',
+    date: 'Enter a date.',
+    tooLong: (max: number) => `Keep this under ${max.toLocaleString('en')} characters.`,
+    fileType: (accepted: string) => `This file type isn’t accepted. Use ${accepted}.`,
+    fileSize: (mb: number) => `This file is too large. The limit is ${mb} MB.`,
+    stepSummary: (count: number) =>
+      count === 1
+        ? '1 question on this step needs attention.'
+        : `${count} questions on this step need attention.`,
+    reviewSummary: 'Some answers need attention. We’ve taken you to the first one.',
+  },
+  failure:
+    'Sorry, we couldn’t send your checklist. Your answers are still here; please try again in a moment.',
+  success: {
+    title: 'Thank you, we’ve received your checklist',
+    text: 'Sumic will review your answers and be in touch soon to discuss the next steps.',
+    home: 'Back to home',
+    services: 'Explore our services',
+  },
+  honeypotLabel: 'Leave this field empty',
+} as const

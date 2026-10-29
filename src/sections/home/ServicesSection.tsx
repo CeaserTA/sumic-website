@@ -1,4 +1,4 @@
-import { ArrowUpRightIcon, ClipboardListIcon } from 'lucide-react'
+import { ArrowRightIcon, ClipboardListIcon } from 'lucide-react'
 
 import { serviceIcons } from '@/components/icons/serviceIcons'
 import { AppLink } from '@/components/layout/AppLink'
@@ -6,8 +6,6 @@ import { Section } from '@/components/layout/Section'
 import { Reveal } from '@/components/motion/Reveal'
 import type { HomeServices } from '@/content/home'
 import type { Service } from '@/content/services'
-import { ui } from '@/content/ui'
-import { externalProps, navHref } from '@/lib/nav'
 
 interface ServicesSectionProps {
   content: HomeServices
@@ -22,13 +20,10 @@ interface ServicesSectionProps {
 export function ServicesSection({ content, services }: ServicesSectionProps) {
   return (
     <Section id="services" eyebrow={content.eyebrow} title={content.title} tone="muted">
-
       {/* ── Horizontal timeline (desktop) / grid (mobile) ── */}
       <div className="mt-10 lg:mt-12">
-
         {/* Timeline wrapper — position relative so the connecting line can be absolute */}
         <div className="relative">
-
           {/* Horizontal connecting line — desktop only */}
           <div
             aria-hidden="true"
@@ -55,20 +50,15 @@ export function ServicesSection({ content, services }: ServicesSectionProps) {
                       <span className="size-2 rounded-full bg-brand-accent" />
                     </span>
                     {/* Right connector */}
-                    <div className={`h-px flex-1 ${isLast ? 'bg-transparent' : 'bg-transparent'}`} />
+                    <div
+                      className={`h-px flex-1 ${isLast ? 'bg-transparent' : 'bg-transparent'}`}
+                    />
                   </div>
 
                   {/* Card: the whole card is the "Learn more" link's hit area (its ::after
                       covers the card), so the hover state promises exactly what a click does. */}
                   <div
-                    className={`
-                      group relative flex h-full flex-col gap-3 rounded-2xl border border-brand-line
-                      bg-brand-surface p-4 transition-[border-color,box-shadow,scale] duration-200 ease-out
-                      hover:border-brand-accent/40 hover:shadow-md hover:shadow-brand-primary/8
-                      has-[a:active]:scale-[0.98] has-[a:active]:duration-100
-                      has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-offset-2 has-[a:focus-visible]:outline-ring
-                      lg:mx-2 lg:rounded-xl
-                    `}
+                    className={`group relative flex h-full flex-col gap-3 rounded-2xl border border-brand-line bg-brand-surface p-4 transition-[border-color,box-shadow,scale] duration-200 ease-out hover:border-brand-accent/40 hover:shadow-md hover:shadow-brand-primary/8 has-[a:active]:scale-[0.98] has-[a:active]:duration-100 has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-offset-2 has-[a:focus-visible]:outline-ring lg:mx-2 lg:rounded-xl`}
                   >
                     {/* Icon */}
                     <span className="flex size-9 items-center justify-center rounded-lg bg-brand-accent-ink/10 text-brand-accent-ink transition-colors group-hover:bg-brand-accent group-hover:text-brand-accent-foreground">
@@ -76,7 +66,7 @@ export function ServicesSection({ content, services }: ServicesSectionProps) {
                     </span>
 
                     {/* Title */}
-                    <h3 className="text-sm font-semibold leading-snug text-brand-heading">
+                    <h3 className="text-sm leading-snug font-semibold text-brand-heading">
                       {service.shortTitle ?? service.title}
                     </h3>
 
@@ -114,15 +104,13 @@ export function ServicesSection({ content, services }: ServicesSectionProps) {
           <ul className="flex flex-wrap gap-x-6 gap-y-3">
             {content.checklist.links.map((link) => (
               <li key={link.label}>
-                <a
-                  href={navHref(link)}
-                  {...externalProps(link)}
+                <AppLink
+                  href={link.href}
                   className="inline-flex items-center gap-1 rounded-sm font-medium text-brand-primary underline underline-offset-4 transition-colors hover:text-brand-accent-ink"
                 >
                   {link.label}
-                  <ArrowUpRightIcon aria-hidden="true" className="size-4" />
-                  <span className="sr-only">{ui.nav.opensInNewTab}</span>
-                </a>
+                  <ArrowRightIcon aria-hidden="true" className="size-4" />
+                </AppLink>
               </li>
             ))}
           </ul>

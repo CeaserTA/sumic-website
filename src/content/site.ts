@@ -132,16 +132,10 @@ export const site: SiteContent = {
       label: 'Checklist Forms',
       href: '#',
       children: [
-        {
-          label: 'Website Checklist Form',
-          href: 'https://forms.gle/tKaBT39AWJqJDHb98',
-          external: true,
-        },
-        {
-          label: 'Mobile App Checklist Form',
-          href: 'https://forms.gle/bmbxCA1CLruqx9fG6',
-          external: true,
-        },
+        // Our own forms; they replaced the Google Forms (https://forms.gle/tKaBT39AWJqJDHb98,
+        // https://forms.gle/bmbxCA1CLruqx9fG6). Paths as in pages.ts.
+        { label: 'Website Checklist Form', href: '/checklists/website/' },
+        { label: 'Mobile App Checklist Form', href: '/checklists/mobile-app/' },
       ],
     },
     { label: 'Partnerships', href: '/sumic-partnerships/' },

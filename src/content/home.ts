@@ -81,7 +81,6 @@ export const homeServices: HomeServices = {
     links: checklistForms.map((form) => ({
       label: form.shortLabel,
       href: form.href,
-      external: true,
     })),
   },
 }

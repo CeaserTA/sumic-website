@@ -1,7 +1,9 @@
 import { createElement } from 'react'
 
+import type { ChecklistFormDefinition } from '@/content/checklists/types'
 import type { LegalDocument } from '@/content/legal/types'
 import type { PageId } from '@/content/pages'
+import type { ChecklistPageId } from '@/pages/ChecklistPage'
 import type { LegalPageId } from '@/pages/LegalPage'
 import { lazyWithPreload } from '@/routes/lazyWithPreload'
 import { pageForPath } from '@/routes/meta'
@@ -56,6 +58,24 @@ export const CareersPage = lazyWithPreload(() =>
 export const ContactPage = lazyWithPreload(() =>
   import('@/pages/ContactPage').then((module) => module.ContactPage),
 )
+// Checklist pages: the shared ChecklistPage plus only that route's form data.
+function checklistPage(pageId: ChecklistPageId, loadForm: () => Promise<ChecklistFormDefinition>) {
+  return lazyWithPreload(async () => {
+    const [{ ChecklistPage }, form] = await Promise.all([
+      import('@/pages/ChecklistPage'),
+      loadForm(),
+    ])
+    return function ChecklistRoute() {
+      return createElement(ChecklistPage, { pageId, form })
+    }
+  })
+}
+export const WebsiteChecklistPage = checklistPage('checklist-website', () =>
+  import('@/content/checklists/website').then((module) => module.websiteChecklist),
+)
+export const MobileAppChecklistPage = checklistPage('checklist-mobile-app', () =>
+  import('@/content/checklists/mobile-app').then((module) => module.mobileAppChecklist),
+)
 
 const modules: Partial<Record<PageId, { preload: () => Promise<void> }>> = {
   'privacy-policy': PrivacyPolicyPage,
@@ -69,6 +89,8 @@ const modules: Partial<Record<PageId, { preload: () => Promise<void> }>> = {
   partnerships: PartnershipsPage,
   careers: CareersPage,
   contact: ContactPage,
+  'checklist-website': WebsiteChecklistPage,
+  'checklist-mobile-app': MobileAppChecklistPage,
 }
 
 /** Load the page module for `pathname` (if it is code-split) so hydration happens in place. */
